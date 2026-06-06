@@ -34,6 +34,8 @@
     color:var(--ink);margin:12px 0 4px;font-style:italic;opacity:.92;}
   .quote cite{display:inline-block;font-family:'Archivo',sans-serif;font-style:normal;
     font-size:13px;font-weight:700;color:var(--gold);margin-left:6px;letter-spacing:.04em;}
+  .visits{margin-top:8px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.03em;}
+  .visits #visit-num{color:var(--gold);}
   h1{font-family:'Archivo Black',sans-serif;font-size:clamp(28px,5vw,52px);line-height:.98;margin:6px 0 4px;}
   h1 span{color:var(--gold);}
   .sub{color:var(--muted);font-size:14px;max-width:680px;}
@@ -131,6 +133,83 @@
   .third{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;}
   .third .lbl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:8px;}
   .legend{max-width:1500px;margin:18px auto 0;color:var(--muted);font-size:12px;display:flex;gap:22px;flex-wrap:wrap;}
+
+  /* ---------- WORLD / GLOBE ---------- */
+  .world-head{max-width:1500px;margin:4px auto 10px;}
+  .world-head h3{font-family:'Archivo Black';font-size:22px;}
+  .world-head p{color:var(--muted);font-size:13px;max-width:680px;margin-top:4px;}
+  #globe-wrap{position:relative;max-width:1500px;margin:0 auto;height:min(72vh,680px);
+    border:1px solid var(--line);border-radius:18px;overflow:hidden;
+    background:radial-gradient(120% 120% at 50% 0%, #0d2036 0%, #08111d 55%, #060b14 100%);}
+  #globe-canvas{display:block;width:100%;height:100%;cursor:grab;}
+  #globe-canvas:active{cursor:grabbing;}
+  #globe-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:var(--muted);font-weight:700;letter-spacing:.04em;font-size:14px;z-index:2;}
+  .country-card{position:absolute;top:16px;right:16px;width:min(310px,84%);max-height:calc(100% - 32px);overflow-y:auto;
+    background:rgba(16,32,52,.94);backdrop-filter:blur(10px);border:1px solid var(--line);
+    border-radius:14px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.5);z-index:4;
+    transition:opacity .2s, transform .2s;}
+  .country-card.hidden{opacity:0;transform:translateY(-8px);pointer-events:none;}
+  .world-search{position:relative;max-width:420px;margin-top:12px;}
+  .world-search input{width:100%;background:var(--slot);border:1px solid var(--line);border-radius:10px;
+    color:var(--ink);padding:11px 14px;font-family:'Archivo';font-size:14px;font-weight:600;}
+  .world-search input:focus{outline:none;border-color:var(--gold);}
+  .search-results{position:absolute;top:46px;left:0;right:0;background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;overflow:hidden;z-index:6;display:none;max-height:280px;overflow-y:auto;}
+  .search-results.show{display:block;}
+  .search-results .sr{display:flex;align-items:center;gap:9px;padding:10px 13px;cursor:pointer;font-size:14px;font-weight:600;}
+  .search-results .sr:hover,.search-results .sr.active{background:#15294a;}
+  .search-results .sr .flag{font-size:18px;}
+  .search-results .sr small{margin-left:auto;color:var(--muted);font-size:11px;}
+  .globe-legend{position:absolute;left:16px;bottom:14px;z-index:3;display:flex;gap:12px;flex-wrap:wrap;
+    font-size:11px;color:var(--muted);background:rgba(10,23,38,.6);backdrop-filter:blur(6px);
+    padding:8px 12px;border-radius:10px;border:1px solid var(--line);max-width:70%;}
+  .globe-legend span{display:flex;align-items:center;gap:5px;}
+  .globe-legend i{width:10px;height:10px;border-radius:50%;display:inline-block;}
+  .country-card .cc-flag{font-size:34px;line-height:1;}
+  .country-card .cc-name{font-family:'Archivo Black';font-size:20px;margin:6px 0 2px;}
+  .country-card .cc-meta{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.03em;}
+  .country-card .cc-rank{display:inline-block;margin-top:8px;font-size:11px;font-weight:800;
+    color:var(--gold);border:1px solid var(--gold);border-radius:6px;padding:2px 8px;}
+  .country-card .cc-stats{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .country-card .cc-stat{background:var(--slot);border:1px solid var(--line);border-radius:9px;padding:8px 10px;}
+  .country-card .cc-stat .k{font-size:10px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;}
+  .country-card .cc-stat .v{font-size:14px;font-weight:800;margin-top:2px;}
+  .country-card .cc-row{margin-top:10px;font-size:12px;}
+  .country-card .cc-row .k{color:var(--muted);}
+  .country-card .cc-row .v{color:var(--ink);font-weight:700;}
+  .country-card .cc-form{display:flex;gap:5px;margin-top:4px;}
+  .country-card .cc-form i{width:18px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;
+    font-size:10px;font-weight:800;color:#06121f;}
+  .cc-form i.W{background:#16a34a;color:#04120a;} .cc-form i.D{background:#9aa7b4;} .cc-form i.L{background:#ef4444;color:#1a0606;}
+  .country-card .cc-blurb{font-size:12.5px;line-height:1.5;margin-top:10px;color:var(--ink);}
+  .country-card .cc-rivals{font-size:12px;color:var(--muted);margin-top:8px;}
+  .country-card .cc-rivals b{color:var(--ink);}
+  .cc-squad{margin-top:12px;border-top:1px solid var(--line);padding-top:10px;}
+  .cc-squad-h{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+  .cc-squad-h span{color:var(--gold);font-weight:700;text-transform:none;letter-spacing:0;font-size:10px;
+    border:1px solid var(--gold);border-radius:5px;padding:1px 6px;margin-left:6px;}
+  .cc-squad-list{max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:7px;padding-right:4px;}
+  .cc-squad-list::-webkit-scrollbar{width:6px;} .cc-squad-list::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px;}
+  .cc-pl{background:var(--slot);border:1px solid var(--line);border-radius:8px;padding:7px 9px;}
+  .cc-pl-n{font-size:13px;font-weight:800;}
+  .cc-pl-c{font-size:11px;color:var(--accent);font-weight:700;margin-top:1px;}
+  .cc-pl-r{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.35;}
+  .cc-pl-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+  .cc-pl-cg{font-size:10px;color:var(--muted);font-weight:700;white-space:nowrap;}
+  .cc-cap{color:var(--gold);font-size:10px;font-weight:800;}
+  .cc-pos-h{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin:8px 0 2px;opacity:.85;}
+  .cc-pos-h:first-child{margin-top:0;}
+  .cc-host{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.4;background:var(--slot);border:1px solid var(--line);border-radius:8px;padding:8px 10px;}
+  .cc-host-h{display:block;color:var(--accent);font-weight:800;font-size:10px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px;}
+  .country-card .cc-close{position:absolute;top:10px;right:12px;cursor:pointer;color:var(--muted);
+    font-size:18px;border:none;background:none;}
+  @media (max-width:760px){
+    .world-head h3{font-size:18px;}
+    #globe-wrap{height:64vh;border-radius:14px;}
+    .country-card{width:min(300px,90%);}
+    .globe-legend{display:none;}
+  }
   .legend b{color:var(--ink);}
   .dot{display:inline-block;width:10px;height:10px;border-radius:3px;vertical-align:middle;margin-right:5px;}
 
@@ -216,6 +295,7 @@
   <h1>WC 26 <span>PREDICTIVE</span> ENGINE</h1>
   <div class="byline">A product by <strong>Vaibhav Dashora</strong></div>
   <blockquote class="quote">"The beautiful game." <cite>— Pelé</cite></blockquote>
+  <div class="visits" id="visit-counter" title="Total visits">👁 <span id="visit-num">…</span> visits</div>
   <p class="sub">Set your group standings, then run the knockouts. Group order feeds the qualifiers automatically. Save snapshots, reload them, or reset to your original baseline anytime.</p>
   <div class="toolbar">
     <button class="tool" onclick="saveScenario()">💾 Save As…</button>
@@ -230,6 +310,7 @@
 <div class="tabs">
   <div class="tab active" data-v="groups" onclick="switchTab('groups')">Group Stage</div>
   <div class="tab" data-v="bracket" onclick="switchTab('bracket')">Knockouts</div>
+  <div class="tab" data-v="world" onclick="switchTab('world')">🌍 World</div>
 </div>
 
 <!-- GROUPS VIEW -->
@@ -253,6 +334,24 @@
     <span><span class="dot" style="background:var(--gold)"></span> <b>Picked winner</b></span>
     <span><span class="dot" style="background:var(--slot);border:1px solid var(--line)"></span> Click a team to advance it</span>
     <span><b>M##</b> = official match number</span>
+  </div>
+</div>
+
+<!-- WORLD VIEW -->
+<div class="view" id="view-world">
+  <div class="world-head">
+    <h3>Football Planet</h3>
+    <p>The 48 qualified nations on a living globe. Drag to spin · scroll to zoom · search or tap a nation for its World Cup story.</p>
+    <div class="world-search">
+      <input id="country-search" type="text" placeholder="🔍  Search a country… (e.g. Brazil, Japan, Ghana)" autocomplete="off">
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+  <div id="globe-wrap">
+    <div id="globe-loading">Spinning up the planet…</div>
+    <canvas id="globe-canvas"></canvas>
+    <div id="country-card" class="country-card hidden"></div>
+    <div class="globe-legend" id="globe-legend"></div>
   </div>
 </div>
 
@@ -827,9 +926,475 @@ function switchTab(v){
   document.getElementById("view-"+v).classList.add("active");
   // bracket needs to be visible for geometry measurement to be correct
   if(v==="bracket"){requestAnimationFrame(()=>{drawConnectors();requestAnimationFrame(drawConnectors);});}
+  // globe loads Three.js only on first open of the World tab
+  if(v==="world"){requestAnimationFrame(initGlobe);}
 }
 let _rzT;
 window.addEventListener("resize",()=>{clearTimeout(_rzT);_rzT=setTimeout(drawConnectors,120);});
+
+
+/* ===================== WORLD GLOBE (lazy-loaded Three.js) ===================== */
+/* Per-nation data. NOTE: squads/coaches/form are an illustrative snapshot for an
+   informational graphic, not a live feed. titles=WC wins, best=best finish,
+   conf=confederation, col=dominant flag colour (hex), col2=accent. form: last 5 (W/D/L). */
+const GEO={
+  MEX:{lat:23.6,lng:-102.5,s:14,conf:"CONCACAF",titles:0,best:"QF (1970, 1986)",coach:"Javier Aguirre",cap:"Edson Álvarez",form:["W","D","W","L","W"],col:"#006847",col2:"#ce1126"},
+  KOR:{lat:36.5,lng:127.8,s:23,conf:"AFC",titles:0,best:"4th (2002)",coach:"Hong Myung-bo",cap:"Son Heung-min",form:["W","W","D","W","L"],col:"#cd2e3a",col2:"#0047a0"},
+  CZE:{lat:49.8,lng:15.5,s:40,conf:"UEFA",titles:0,best:"Final (1934,1962 as TCH)",coach:"Ivan Hašek",cap:"Tomáš Souček",form:["D","L","W","D","W"],col:"#11457e",col2:"#d7141a"},
+  RSA:{lat:-30.6,lng:22.9,s:60,conf:"CAF",titles:0,best:"Group (1998,2002,2010)",coach:"Hugo Broos",cap:"Ronwen Williams",form:["W","W","W","D","L"],col:"#007a4d",col2:"#ffb612"},
+  SUI:{lat:46.8,lng:8.2,s:19,conf:"UEFA",titles:0,best:"QF (1934,1938,1954)",coach:"Murat Yakin",cap:"Granit Xhaka",form:["W","D","W","L","D"],col:"#d52b1e",col2:"#ffffff"},
+  CAN:{lat:56.1,lng:-106.3,s:43,conf:"CONCACAF",titles:0,best:"Group (1986,2022)",coach:"Jesse Marsch",cap:"Alphonso Davies",form:["W","L","W","W","D"],col:"#d80621",col2:"#ffffff"},
+  BIH:{lat:43.9,lng:17.7,s:74,conf:"UEFA",titles:0,best:"Group (2014)",coach:"Sergej Barbarez",cap:"Edin Džeko",form:["D","W","L","D","W"],col:"#002395",col2:"#fecb00"},
+  QAT:{lat:25.4,lng:51.2,s:37,conf:"AFC",titles:0,best:"Group (2022)",coach:"Luís García",cap:"Hassan Al-Haydos",form:["W","W","D","L","W"],col:"#8a1538",col2:"#ffffff"},
+  BRA:{lat:-14.2,lng:-51.9,s:5,conf:"CONMEBOL",titles:5,best:"Champions ×5",coach:"Carlo Ancelotti",cap:"Marquinhos",form:["W","W","D","W","W"],col:"#009b3a",col2:"#fedf00"},
+  MAR:{lat:31.8,lng:-7.1,s:12,conf:"CAF",titles:0,best:"4th (2022)",coach:"Walid Regragui",cap:"Achraf Hakimi",form:["W","W","W","D","W"],col:"#c1272d",col2:"#006233"},
+  SCO:{lat:56.5,lng:-4.2,s:39,conf:"UEFA",titles:0,best:"Group (×8)",coach:"Steve Clarke",cap:"Andrew Robertson",form:["L","D","W","W","D"],col:"#005eb8",col2:"#ffffff"},
+  HAI:{lat:18.9,lng:-72.3,s:83,conf:"CONCACAF",titles:0,best:"Group (1974)",coach:"Sébastien Migné",cap:"Duckens Nazon",form:["W","D","L","W","L"],col:"#00209f",col2:"#d21034"},
+  USA:{lat:39.8,lng:-98.6,s:16,conf:"CONCACAF",titles:0,best:"3rd (1930)",coach:"Mauricio Pochettino",cap:"Christian Pulisic",form:["W","W","L","D","W"],col:"#3c3b6e",col2:"#b22234"},
+  AUS:{lat:-25.3,lng:133.8,s:24,conf:"AFC",titles:0,best:"R16 (2006,2022)",coach:"Tony Popovic",cap:"Mathew Ryan",form:["W","D","W","L","W"],col:"#00843d",col2:"#ffcd00"},
+  TUR:{lat:38.9,lng:35.2,s:27,conf:"UEFA",titles:0,best:"3rd (2002)",coach:"Vincenzo Montella",cap:"Hakan Çalhanoğlu",form:["W","W","D","W","L"],col:"#e30a17",col2:"#ffffff"},
+  PAR:{lat:-23.4,lng:-58.4,s:54,conf:"CONMEBOL",titles:0,best:"R16 (1986,1998,2010)",coach:"Gustavo Alfaro",cap:"Gustavo Gómez",form:["D","W","W","D","L"],col:"#d52b1e",col2:"#0038a8"},
+  GER:{lat:51.2,lng:10.4,s:9,conf:"UEFA",titles:4,best:"Champions ×4",coach:"Julian Nagelsmann",cap:"Joshua Kimmich",form:["W","W","D","W","L"],col:"#000000",col2:"#dd0000"},
+  ECU:{lat:-1.8,lng:-78.2,s:31,conf:"CONMEBOL",titles:0,best:"R16 (2006)",coach:"Sebastián Beccacece",cap:"Enner Valencia",form:["W","D","W","W","D"],col:"#ffdd00",col2:"#034ea2"},
+  CIV:{lat:7.5,lng:-5.5,s:41,conf:"CAF",titles:0,best:"Group (2006,2010,2014)",coach:"Emerse Faé",cap:"Franck Kessié",form:["W","W","D","W","W"],col:"#f77f00",col2:"#009e60"},
+  CUW:{lat:12.2,lng:-69.0,s:90,conf:"CONCACAF",titles:0,best:"Debut (2026)",coach:"Dick Advocaat",cap:"Leandro Bacuna",form:["W","D","W","L","W"],col:"#002b7f",col2:"#f9d616"},
+  NED:{lat:52.1,lng:5.3,s:6,conf:"UEFA",titles:0,best:"Final ×3",coach:"Ronald Koeman",cap:"Virgil van Dijk",form:["W","W","D","W","W"],col:"#ae1c28",col2:"#21468b"},
+  SWE:{lat:60.1,lng:18.6,s:35,conf:"UEFA",titles:0,best:"Final (1958)",coach:"Jon Dahl Tomasson",cap:"Emil Forsberg",form:["D","W","L","W","D"],col:"#006aa7",col2:"#fecc00"},
+  JPN:{lat:36.2,lng:138.3,s:17,conf:"AFC",titles:0,best:"R16 (×4)",coach:"Hajime Moriyasu",cap:"Wataru Endō",form:["W","W","W","D","W"],col:"#bc002d",col2:"#ffffff"},
+  TUN:{lat:33.9,lng:9.5,s:49,conf:"CAF",titles:0,best:"Group (×6)",coach:"Sami Trabelsi",cap:"Youssef Msakni",form:["D","W","D","L","W"],col:"#e70013",col2:"#ffffff"},
+  BEL:{lat:50.5,lng:4.5,s:8,conf:"UEFA",titles:0,best:"3rd (2018)",coach:"Rudi Garcia",cap:"Kevin De Bruyne",form:["W","D","W","W","L"],col:"#000000",col2:"#fdda24"},
+  IRN:{lat:32.4,lng:53.7,s:20,conf:"AFC",titles:0,best:"Group (×6)",coach:"Amir Ghalenoei",cap:"Alireza Jahanbakhsh",form:["W","W","D","W","D"],col:"#239f40",col2:"#da0000"},
+  EGY:{lat:26.8,lng:30.8,s:33,conf:"CAF",titles:0,best:"Group (1934,1990,2018)",coach:"Hossam Hassan",cap:"Mohamed Salah",form:["W","W","D","W","W"],col:"#ce1126",col2:"#000000"},
+  NZL:{lat:-40.9,lng:174.9,s:89,conf:"OFC",titles:0,best:"Group (1982,2010)",coach:"Darren Bazeley",cap:"Chris Wood",form:["W","D","W","L","D"],col:"#00247d",col2:"#cc142b"},
+  URU:{lat:-32.5,lng:-55.8,s:15,conf:"CONMEBOL",titles:2,best:"Champions ×2",coach:"Marcelo Bielsa",cap:"Federico Valverde",form:["W","W","D","L","W"],col:"#7b9fd4",col2:"#001489"},
+  ESP:{lat:40.5,lng:-3.7,s:2,conf:"UEFA",titles:1,best:"Champions (2010)",coach:"Luis de la Fuente",cap:"Álvaro Morata",form:["W","W","W","W","D"],col:"#aa151b",col2:"#f1bf00"},
+  KSA:{lat:23.9,lng:45.1,s:59,conf:"AFC",titles:0,best:"R16 (1994)",coach:"Hervé Renard",cap:"Salem Al-Dawsari",form:["W","D","L","W","D"],col:"#006c35",col2:"#ffffff"},
+  CPV:{lat:16.0,lng:-24.0,s:70,conf:"CAF",titles:0,best:"Debut (2026)",coach:"Bubista",cap:"Ryan Mendes",form:["W","W","D","W","L"],col:"#003893",col2:"#cf2027"},
+  FRA:{lat:46.2,lng:2.2,s:3,conf:"UEFA",titles:2,best:"Champions ×2",coach:"Didier Deschamps",cap:"Kylian Mbappé",form:["W","W","D","W","W"],col:"#002395",col2:"#ed2939"},
+  NOR:{lat:60.5,lng:8.5,s:42,conf:"UEFA",titles:0,best:"R16 (1998)",coach:"Ståle Solbakken",cap:"Martin Ødegaard",form:["W","W","W","D","W"],col:"#ba0c2f",col2:"#00205b"},
+  SEN:{lat:14.5,lng:-14.5,s:18,conf:"CAF",titles:0,best:"QF (2002)",coach:"Pape Thiaw",cap:"Kalidou Koulibaly",form:["W","W","D","W","W"],col:"#00853f",col2:"#fdef42"},
+  IRQ:{lat:33.2,lng:43.7,s:58,conf:"AFC",titles:0,best:"Group (1986)",coach:"Graham Arnold",cap:"Jalal Hassan",form:["D","W","L","D","W"],col:"#ce1126",col2:"#000000"},
+  ARG:{lat:-38.4,lng:-63.6,s:1,conf:"CONMEBOL",titles:3,best:"Champions ×3",coach:"Lionel Scaloni",cap:"Lionel Messi",form:["W","W","W","D","W"],col:"#75aadb",col2:"#ffffff"},
+  AUT:{lat:47.5,lng:14.6,s:22,conf:"UEFA",titles:0,best:"3rd (1954)",coach:"Ralf Rangnick",cap:"Marcel Sabitzer",form:["W","W","D","W","L"],col:"#ed2939",col2:"#ffffff"},
+  ALG:{lat:28.0,lng:1.7,s:36,conf:"CAF",titles:0,best:"R16 (2014)",coach:"Vladimir Petković",cap:"Riyad Mahrez",form:["W","D","W","W","D"],col:"#006233",col2:"#d21034"},
+  JOR:{lat:30.6,lng:36.2,s:68,conf:"AFC",titles:0,best:"Debut (2026)",coach:"Jamal Sellami",cap:"Mousa Al-Tamari",form:["W","W","D","L","W"],col:"#007a3d",col2:"#ce1126"},
+  POR:{lat:39.4,lng:-8.2,s:7,conf:"UEFA",titles:0,best:"3rd (1966)",coach:"Roberto Martínez",cap:"Cristiano Ronaldo",form:["W","W","W","D","W"],col:"#006600",col2:"#ff0000"},
+  COL:{lat:4.6,lng:-74.3,s:13,conf:"CONMEBOL",titles:0,best:"QF (2014)",coach:"Néstor Lorenzo",cap:"James Rodríguez",form:["W","D","W","W","W"],col:"#fcd116",col2:"#003893"},
+  COD:{lat:-4.0,lng:21.8,s:57,conf:"CAF",titles:0,best:"Debut (2026)",coach:"Sébastien Desabre",cap:"Chancel Mbemba",form:["W","W","D","L","W"],col:"#007fff",col2:"#f7d618"},
+  UZB:{lat:41.4,lng:64.6,s:62,conf:"AFC",titles:0,best:"Debut (2026)",coach:"Timur Kapadze",cap:"Eldor Shomurodov",form:["W","D","W","W","D"],col:"#1eb53a",col2:"#0099b5"},
+  ENG:{lat:52.4,lng:-1.5,s:4,conf:"UEFA",titles:1,best:"Champions (1966)",coach:"Thomas Tuchel",cap:"Harry Kane",form:["W","W","D","W","W"],col:"#ffffff",col2:"#ce1124"},
+  CRO:{lat:45.1,lng:15.2,s:10,conf:"UEFA",titles:0,best:"Final (2018)",coach:"Zlatko Dalić",cap:"Luka Modrić",form:["W","D","W","W","L"],col:"#ff0000",col2:"#171796"},
+  PAN:{lat:8.5,lng:-80.8,s:46,conf:"CONCACAF",titles:0,best:"Group (2018)",coach:"Thomas Christiansen",cap:"Aníbal Godoy",form:["W","W","D","L","W"],col:"#da121a",col2:"#072357"},
+  GHA:{lat:7.9,lng:-1.0,s:75,conf:"CAF",titles:0,best:"QF (2010)",coach:"Otto Addo",cap:"Thomas Partey",form:["D","W","W","L","W"],col:"#006b3f",col2:"#fcd116"}
+};
+const RIVALS={
+  ARG:["BRA","ENG","URU"],BRA:["ARG"],ENG:["GER","SCO","ARG"],GER:["NED","ENG"],NED:["GER","BEL"],
+  POR:["ESP"],ESP:["POR"],FRA:["GER"],URU:["ARG","BRA"],MEX:["USA"],USA:["MEX","CAN"],
+  CAN:["USA"],KOR:["JPN"],JPN:["KOR"],IRN:["KSA","IRQ"],KSA:["IRN"],IRQ:["IRN"],EGY:["ALG"],
+  ALG:["EGY","MAR"],MAR:["ALG"],SCO:["ENG"],BEL:["NED"],SWE:["NOR"],NOR:["SWE"],
+  AUS:["NZL"],NZL:["AUS"],COL:["ARG"],SEN:["CIV"],CIV:["GHA"],GHA:["CIV"],
+  PAR:["URU"],AUT:["GER"],TUN:["ALG"],PAN:["MEX"],UZB:["IRN"],COD:["GHA"],CPV:["SEN"],
+  HAI:["USA"],QAT:["KSA"],JOR:["IRQ"]
+};
+const CONF_COL={UEFA:"#4f86f7",CONMEBOL:"#f4c542",CAF:"#16a34a",AFC:"#e0556e",CONCACAF:"#9b6dff",OFC:"#26c6da"};
+const BLURB={
+  ARG:"Diego and Leo's homeland — football is near-religion here.",BRA:"Five-time champions; the yellow shirt is national identity.",
+  ENG:"The game's birthplace and home of the Premier League.",FRA:"A relentless talent factory and recent two-time finalist.",
+  ESP:"Tiki-taka tradition; El Clásico is the planet's fiercest rivalry.",NED:"Total Football pioneers — the great nearly-men of the game.",
+  POR:"Ronaldo's nation; a small country with an outsized soul.",GER:"Ruthless tournament pedigree and four stars on the shirt.",
+  CRO:"Tiny nation, giant heart — a 2018 finalist defying its size.",BEL:"A golden generation that made football the national tongue.",
+  MEX:"El Tri fever — the Azteca roars like nowhere else.",USA:"A booming, youthful football culture; co-hosts of 2026.",
+  JPN:"Disciplined and technical; fans clean the stands after games.",KOR:"Red Devil passion; the 2002 run is national folklore.",
+  IRN:"Team Melli commands fervent support nationwide.",SEN:"Teranga Lions — fast, fearless African champions.",
+  MAR:"Atlas Lions stunned the world at a 2022 semi-final.",URU:"Two world titles from a nation of three million.",
+  COL:"Salsa, flair and joy — football as celebration.",AUS:"The Socceroos carry a growing football flame.",
+  SUI:"Quietly excellent, tidy and organized tournament regulars.",CAN:"Co-hosts and a rising force north of the border.",
+  TUR:"Some of the loudest, most passionate stadiums on earth.",ECU:"Altitude warriors with a fearless young core.",
+  CIV:"The Elephants — recent African continental champions.",SWE:"Cool, organized and quietly dangerous Scandinavians.",
+  NOR:"Haaland's homeland — a bright new era dawning.",EGY:"The Pharaohs and Mo Salah; record African Cup winners.",
+  ALG:"Desert Foxes — fierce and adored across the Maghreb.",AUT:"Modern, pressing and on the rise.",
+  CZE:"A proud central-European tradition of clever football.",RSA:"Bafana Bafana and the unmistakable vuvuzela.",
+  QAT:"Hosts of 2022, investing in a fast-maturing program.",PAR:"Gritty, combative South American spirit.",
+  CUW:"A tiny Caribbean island defying the odds on the world stage.",TUN:"Carthage Eagles — loyal North African support.",
+  NZL:"The All Whites fly football's flag in rugby country.",KSA:"Green Falcons — toppled Argentina in 2022.",
+  CPV:"Blue Sharks — a ten-island fairy tale debut.",IRQ:"Lions of Mesopotamia — football as unifying joy.",
+  JOR:"Surprise 2023 Asian Cup finalists, now on the world stage.",COD:"The Leopards — Central African flair and resilience.",
+  UZB:"Central Asia's steady riser reaching its first World Cup.",SCO:"The Tartan Army and football's oldest rivalry.",
+  BIH:"Dragons of the Balkans — technical and fiercely backed.",HAI:"Caribbean passion returning to the global stage.",
+  PAN:"Los Canaleros — football fever grips the isthmus.",GHA:"The Black Stars — Africa's great entertainers."
+};
+/* Official FIFA World Cup 2026 final 26-man squads (submitted to FIFA Jun 1, announced Jun 2, 2026).
+   Source: Wikipedia '2026 FIFA World Cup squads'. Fields: {n:name,p:position,caps,g:goals,c:club,cap:captain}.
+   Caps/goals/clubs are point-in-time at squad announcement. */
+const SQUADS={
+  ARG:[{n:"Juan Musso",p:"GK",caps:3,g:0,c:"Atlético Madrid"},{n:"Leonardo Balerdi",p:"DF",caps:11,g:0,c:"Marseille"},{n:"Nicolás Tagliafico",p:"DF",caps:75,g:1,c:"Lyon"},{n:"Gonzalo Montiel",p:"DF",caps:38,g:2,c:"River Plate"},{n:"Leandro Paredes",p:"MF",caps:77,g:5,c:"Boca Juniors"},{n:"Lisandro Martínez",p:"DF",caps:26,g:1,c:"Manchester United"},{n:"Rodrigo De Paul",p:"MF",caps:85,g:2,c:"Inter Miami CF"},{n:"Valentín Barco",p:"MF",caps:2,g:1,c:"Strasbourg"},{n:"Julián Alvarez",p:"FW",caps:51,g:14,c:"Atlético Madrid"},{n:"Lionel Messi",p:"FW",caps:198,g:116,c:"Inter Miami CF",cap:1},{n:"Giovani Lo Celso",p:"MF",caps:65,g:4,c:"Real Betis"},{n:"Gerónimo Rulli",p:"GK",caps:7,g:0,c:"Marseille"},{n:"Cristian Romero",p:"DF",caps:49,g:3,c:"Tottenham Hotspur"},{n:"Exequiel Palacios",p:"MF",caps:38,g:0,c:"Bayer Leverkusen"},{n:"Nicolás González",p:"FW",caps:50,g:6,c:"Atlético Madrid"},{n:"Thiago Almada",p:"FW",caps:14,g:4,c:"Atlético Madrid"},{n:"Giuliano Simeone",p:"FW",caps:11,g:1,c:"Atlético Madrid"},{n:"Nico Paz",p:"FW",caps:8,g:1,c:"Como"},{n:"Nicolás Otamendi",p:"DF",caps:130,g:8,c:"Benfica"},{n:"Alexis Mac Allister",p:"MF",caps:44,g:6,c:"Liverpool"},{n:"José Manuel López",p:"FW",caps:3,g:0,c:"Palmeiras"},{n:"Lautaro Martínez",p:"FW",caps:75,g:36,c:"Inter Milan"},{n:"Emiliano Martínez",p:"GK",caps:59,g:0,c:"Aston Villa"},{n:"Enzo Fernández",p:"MF",caps:40,g:6,c:"Chelsea"},{n:"Facundo Medina",p:"DF",caps:7,g:0,c:"Marseille"},{n:"Nahuel Molina",p:"DF",caps:58,g:1,c:"Atlético Madrid"}],
+  BRA:[{n:"Alisson",p:"GK",caps:77,g:0,c:"Liverpool"},{n:"Wesley",p:"DF",caps:7,g:0,c:"Roma"},{n:"Gabriel Magalhães",p:"DF",caps:17,g:1,c:"Arsenal"},{n:"Marquinhos",p:"DF",caps:104,g:7,c:"Paris Saint-Germain",cap:1},{n:"Casemiro",p:"MF",caps:85,g:9,c:"Manchester United"},{n:"Alex Sandro",p:"DF",caps:44,g:2,c:"Flamengo"},{n:"Vinícius Júnior",p:"FW",caps:48,g:9,c:"Real Madrid"},{n:"Bruno Guimarães",p:"MF",caps:42,g:2,c:"Newcastle United"},{n:"Matheus Cunha",p:"FW",caps:22,g:1,c:"Manchester United"},{n:"Neymar",p:"FW",caps:128,g:79,c:"Santos"},{n:"Raphinha",p:"FW",caps:38,g:11,c:"Barcelona"},{n:"Weverton",p:"GK",caps:10,g:0,c:"Grêmio"},{n:"Danilo Luiz",p:"DF",caps:69,g:1,c:"Flamengo"},{n:"Bremer",p:"DF",caps:7,g:1,c:"Juventus"},{n:"Léo Pereira",p:"DF",caps:3,g:0,c:"Flamengo"},{n:"Douglas Santos",p:"DF",caps:6,g:0,c:"Zenit Saint Petersburg"},{n:"Fabinho",p:"MF",caps:32,g:0,c:"Al-Ittihad"},{n:"Danilo Santos",p:"MF",caps:3,g:2,c:"Botafogo"},{n:"Endrick",p:"FW",caps:16,g:3,c:"Lyon"},{n:"Lucas Paquetá",p:"MF",caps:62,g:13,c:"Flamengo"},{n:"Luiz Henrique",p:"FW",caps:14,g:2,c:"Zenit Saint Petersburg"},{n:"Gabriel Martinelli",p:"FW",caps:22,g:4,c:"Arsenal"},{n:"Ederson",p:"GK",caps:32,g:0,c:"Fenerbahçe"},{n:"Roger Ibañez",p:"DF",caps:6,g:0,c:"Al-Ahli"},{n:"Igor Thiago",p:"FW",caps:3,g:2,c:"Brentford"},{n:"Rayan",p:"FW",caps:2,g:1,c:"Bournemouth"}],
+  FRA:[{n:"Brice Samba",p:"GK",caps:4,g:0,c:"Rennes"},{n:"Malo Gusto",p:"DF",caps:9,g:0,c:"Chelsea"},{n:"Lucas Digne",p:"DF",caps:56,g:0,c:"Aston Villa"},{n:"Dayot Upamecano",p:"DF",caps:36,g:2,c:"Bayern Munich"},{n:"Jules Koundé",p:"DF",caps:46,g:0,c:"Barcelona"},{n:"Manu Koné",p:"MF",caps:12,g:0,c:"Roma"},{n:"Ousmane Dembélé",p:"FW",caps:58,g:7,c:"Paris Saint-Germain"},{n:"Aurélien Tchouaméni",p:"MF",caps:44,g:3,c:"Real Madrid"},{n:"Marcus Thuram",p:"FW",caps:33,g:3,c:"Inter Milan"},{n:"Kylian Mbappé",p:"FW",caps:96,g:56,c:"Real Madrid",cap:1},{n:"Michael Olise",p:"FW",caps:15,g:4,c:"Bayern Munich"},{n:"Bradley Barcola",p:"FW",caps:18,g:3,c:"Paris Saint-Germain"},{n:"N'Golo Kanté",p:"MF",caps:67,g:2,c:"Fenerbahçe"},{n:"Adrien Rabiot",p:"MF",caps:57,g:7,c:"Milan"},{n:"Ibrahima Konaté",p:"DF",caps:27,g:0,c:"Liverpool"},{n:"Mike Maignan",p:"GK",caps:38,g:0,c:"Milan"},{n:"William Saliba",p:"DF",caps:31,g:0,c:"Arsenal"},{n:"Warren Zaïre-Emery",p:"MF",caps:10,g:1,c:"Paris Saint-Germain"},{n:"Théo Hernandez",p:"DF",caps:42,g:2,c:"Al-Hilal"},{n:"Désiré Doué",p:"FW",caps:6,g:2,c:"Paris Saint-Germain"},{n:"Lucas Hernandez",p:"DF",caps:41,g:0,c:"Paris Saint-Germain"},{n:"Jean-Philippe Mateta",p:"FW",caps:3,g:2,c:"Crystal Palace"},{n:"Robin Risser",p:"GK",caps:0,g:0,c:"Lens"},{n:"Rayan Cherki",p:"FW",caps:5,g:1,c:"Manchester City"},{n:"Maghnes Akliouche",p:"FW",caps:7,g:1,c:"Monaco"},{n:"Maxence Lacroix",p:"DF",caps:2,g:0,c:"Crystal Palace"}],
+  ENG:[{n:"Jordan Pickford",p:"GK",caps:82,g:0,c:"Everton"},{n:"Dean Henderson",p:"GK",caps:4,g:0,c:"Crystal Palace"},{n:"James Trafford",p:"GK",caps:1,g:0,c:"Manchester City"},{n:"John Stones",p:"DF",caps:87,g:3,c:"Manchester City"},{n:"Marc Guéhi",p:"DF",caps:27,g:1,c:"Manchester City"},{n:"Reece James",p:"DF",caps:22,g:1,c:"Chelsea"},{n:"Ezri Konsa",p:"DF",caps:18,g:1,c:"Aston Villa"},{n:"Dan Burn",p:"DF",caps:6,g:0,c:"Newcastle United"},{n:"Tino Livramento",p:"DF",caps:5,g:0,c:"Newcastle United"},{n:"Djed Spence",p:"DF",caps:4,g:0,c:"Tottenham Hotspur"},{n:"Nico O'Reilly",p:"DF",caps:3,g:0,c:"Manchester City"},{n:"Jarell Quansah",p:"DF",caps:1,g:0,c:"Bayer Leverkusen"},{n:"Jordan Henderson",p:"MF",caps:89,g:3,c:"Brentford"},{n:"Declan Rice",p:"MF",caps:72,g:6,c:"Arsenal"},{n:"Jude Bellingham",p:"MF",caps:46,g:6,c:"Real Madrid"},{n:"Morgan Rogers",p:"MF",caps:13,g:1,c:"Aston Villa"},{n:"Kobbie Mainoo",p:"MF",caps:12,g:0,c:"Manchester United"},{n:"Elliot Anderson",p:"MF",caps:7,g:0,c:"Nottingham Forest"},{n:"Harry Kane",p:"FW",caps:112,g:78,c:"Bayern Munich",cap:1},{n:"Marcus Rashford",p:"FW",caps:70,g:18,c:"Barcelona"},{n:"Bukayo Saka",p:"FW",caps:48,g:14,c:"Arsenal"},{n:"Ollie Watkins",p:"FW",caps:20,g:6,c:"Aston Villa"},{n:"Anthony Gordon",p:"FW",caps:17,g:2,c:"Newcastle United"},{n:"Eberechi Eze",p:"FW",caps:16,g:3,c:"Arsenal"},{n:"Noni Madueke",p:"FW",caps:10,g:1,c:"Arsenal"},{n:"Ivan Toney",p:"FW",caps:7,g:1,c:"Al-Ahli"}],
+  ESP:[{n:"David Raya",p:"GK",caps:12,g:0,c:"Arsenal"},{n:"Marc Pubill",p:"DF",caps:0,g:0,c:"Atlético Madrid"},{n:"Álex Grimaldo",p:"DF",caps:12,g:0,c:"Bayer Leverkusen"},{n:"Eric García",p:"DF",caps:19,g:0,c:"Barcelona"},{n:"Marcos Llorente",p:"DF",caps:23,g:0,c:"Atlético Madrid"},{n:"Mikel Merino",p:"MF",caps:41,g:10,c:"Arsenal"},{n:"Ferran Torres",p:"FW",caps:55,g:23,c:"Barcelona"},{n:"Fabián Ruiz",p:"MF",caps:41,g:6,c:"Paris Saint-Germain"},{n:"Gavi",p:"MF",caps:28,g:5,c:"Barcelona"},{n:"Dani Olmo",p:"FW",caps:48,g:12,c:"Barcelona"},{n:"Yéremy Pino",p:"FW",caps:21,g:4,c:"Crystal Palace"},{n:"Pedro Porro",p:"DF",caps:16,g:0,c:"Tottenham Hotspur"},{n:"Joan Garcia",p:"GK",caps:1,g:0,c:"Barcelona"},{n:"Aymeric Laporte",p:"DF",caps:44,g:2,c:"Athletic Bilbao"},{n:"Álex Baena",p:"MF",caps:15,g:2,c:"Atlético Madrid"},{n:"Rodri",p:"MF",caps:61,g:4,c:"Manchester City",cap:1},{n:"Nico Williams",p:"FW",caps:30,g:6,c:"Athletic Bilbao"},{n:"Martín Zubimendi",p:"MF",caps:25,g:3,c:"Arsenal"},{n:"Lamine Yamal",p:"FW",caps:25,g:6,c:"Barcelona"},{n:"Pedri",p:"MF",caps:40,g:5,c:"Barcelona"},{n:"Mikel Oyarzabal",p:"FW",caps:52,g:24,c:"Real Sociedad"},{n:"Pau Cubarsí",p:"DF",caps:11,g:0,c:"Barcelona"},{n:"Unai Simón",p:"GK",caps:57,g:0,c:"Athletic Bilbao"},{n:"Marc Cucurella",p:"DF",caps:23,g:1,c:"Chelsea"},{n:"Víctor Muñoz",p:"FW",caps:2,g:1,c:"Osasuna"},{n:"Borja Iglesias",p:"FW",caps:6,g:0,c:"Celta Vigo"}],
+  POR:[{n:"Diogo Costa",p:"GK",caps:42,g:0,c:"Porto"},{n:"José Sá",p:"GK",caps:4,g:0,c:"Wolverhampton Wanderers"},{n:"Rui Silva",p:"GK",caps:2,g:0,c:"Sporting CP"},{n:"Rúben Dias",p:"DF",caps:74,g:3,c:"Manchester City"},{n:"João Cancelo",p:"DF",caps:66,g:12,c:"Barcelona"},{n:"Nélson Semedo",p:"DF",caps:48,g:0,c:"Fenerbahçe"},{n:"Nuno Mendes",p:"DF",caps:43,g:1,c:"Paris Saint-Germain"},{n:"Diogo Dalot",p:"DF",caps:33,g:3,c:"Manchester United"},{n:"Gonçalo Inácio",p:"DF",caps:20,g:2,c:"Sporting CP"},{n:"Matheus Nunes",p:"DF",caps:19,g:2,c:"Manchester City"},{n:"Renato Veiga",p:"DF",caps:11,g:1,c:"Villarreal"},{n:"Tomás Araújo",p:"DF",caps:3,g:0,c:"Benfica"},{n:"Bernardo Silva",p:"MF",caps:107,g:14,c:"Manchester City"},{n:"Bruno Fernandes",p:"MF",caps:87,g:28,c:"Manchester United"},{n:"Rúben Neves",p:"MF",caps:65,g:1,c:"Al-Hilal"},{n:"Vitinha",p:"MF",caps:37,g:0,c:"Paris Saint-Germain"},{n:"João Neves",p:"MF",caps:21,g:3,c:"Paris Saint-Germain"},{n:"Samú Costa",p:"MF",caps:4,g:0,c:"Mallorca"},{n:"Cristiano Ronaldo",p:"FW",caps:226,g:143,c:"Al-Nassr",cap:1},{n:"João Félix",p:"FW",caps:52,g:12,c:"Al-Nassr"},{n:"Rafael Leão",p:"FW",caps:43,g:5,c:"Milan"},{n:"Gonçalo Guedes",p:"FW",caps:33,g:7,c:"Real Sociedad"},{n:"Gonçalo Ramos",p:"FW",caps:24,g:10,c:"Paris Saint-Germain"},{n:"Pedro Neto",p:"FW",caps:23,g:2,c:"Chelsea"},{n:"Francisco Trincão",p:"FW",caps:17,g:3,c:"Sporting CP"},{n:"Francisco Conceição",p:"FW",caps:15,g:3,c:"Juventus"}],
+  NED:[{n:"Bart Verbruggen",p:"GK",caps:27,g:0,c:"Brighton & Hove Albion"},{n:"Mark Flekken",p:"GK",caps:11,g:0,c:"Bayer Leverkusen"},{n:"Robin Roefs",p:"GK",caps:0,g:0,c:"Sunderland"},{n:"Virgil van Dijk",p:"DF",caps:90,g:12,c:"Liverpool",cap:1},{n:"Denzel Dumfries",p:"DF",caps:71,g:11,c:"Inter Milan"},{n:"Nathan Aké",p:"DF",caps:58,g:5,c:"Manchester City"},{n:"Jurriën Timber",p:"DF",caps:23,g:0,c:"Arsenal"},{n:"Micky van de Ven",p:"DF",caps:19,g:1,c:"Tottenham Hotspur"},{n:"Mats Wieffer",p:"DF",caps:14,g:1,c:"Brighton & Hove Albion"},{n:"Jan Paul van Hecke",p:"DF",caps:10,g:0,c:"Brighton & Hove Albion"},{n:"Jorrel Hato",p:"DF",caps:7,g:0,c:"Chelsea"},{n:"Frenkie de Jong",p:"MF",caps:64,g:2,c:"Barcelona"},{n:"Marten de Roon",p:"MF",caps:42,g:1,c:"Atalanta"},{n:"Tijjani Reijnders",p:"MF",caps:30,g:7,c:"Manchester City"},{n:"Teun Koopmeiners",p:"MF",caps:27,g:3,c:"Juventus"},{n:"Ryan Gravenberch",p:"MF",caps:25,g:1,c:"Liverpool"},{n:"Justin Kluivert",p:"MF",caps:11,g:0,c:"Bournemouth"},{n:"Quinten Timber",p:"MF",caps:10,g:1,c:"Marseille"},{n:"Guus Til",p:"MF",caps:6,g:1,c:"PSV Eindhoven"},{n:"Memphis Depay",p:"FW",caps:108,g:55,c:"Corinthians"},{n:"Wout Weghorst",p:"FW",caps:51,g:14,c:"Ajax"},{n:"Donyell Malen",p:"FW",caps:51,g:13,c:"Roma"},{n:"Cody Gakpo",p:"FW",caps:48,g:19,c:"Liverpool"},{n:"Noa Lang",p:"FW",caps:15,g:3,c:"Galatasaray"},{n:"Brian Brobbey",p:"FW",caps:10,g:1,c:"Sunderland"},{n:"Crysencio Summerville",p:"FW",caps:0,g:0,c:"West Ham United"}],
+  GER:[{n:"Manuel Neuer",p:"GK",caps:124,g:0,c:"Bayern Munich"},{n:"Antonio Rüdiger",p:"DF",caps:82,g:3,c:"Real Madrid"},{n:"Waldemar Anton",p:"DF",caps:12,g:0,c:"Borussia Dortmund"},{n:"Jonathan Tah",p:"DF",caps:46,g:1,c:"Bayern Munich"},{n:"Aleksandar Pavlović",p:"MF",caps:10,g:1,c:"Bayern Munich"},{n:"Joshua Kimmich",p:"MF",caps:109,g:11,c:"Bayern Munich",cap:1},{n:"Kai Havertz",p:"FW",caps:57,g:21,c:"Arsenal"},{n:"Leon Goretzka",p:"MF",caps:69,g:15,c:"Bayern Munich"},{n:"Jamie Leweling",p:"MF",caps:4,g:1,c:"VfB Stuttgart"},{n:"Jamal Musiala",p:"MF",caps:41,g:9,c:"Bayern Munich"},{n:"Nick Woltemade",p:"FW",caps:11,g:4,c:"Newcastle United"},{n:"Oliver Baumann",p:"GK",caps:12,g:0,c:"TSG Hoffenheim"},{n:"Pascal Groß",p:"MF",caps:18,g:1,c:"Brighton & Hove Albion"},{n:"Maximilian Beier",p:"FW",caps:8,g:0,c:"Borussia Dortmund"},{n:"Nico Schlotterbeck",p:"DF",caps:26,g:0,c:"Borussia Dortmund"},{n:"Angelo Stiller",p:"MF",caps:7,g:0,c:"VfB Stuttgart"},{n:"Florian Wirtz",p:"MF",caps:40,g:11,c:"Liverpool"},{n:"Nathaniel Brown",p:"DF",caps:4,g:0,c:"Eintracht Frankfurt"},{n:"Leroy Sané",p:"MF",caps:75,g:16,c:"Galatasaray"},{n:"Nadiem Amiri",p:"MF",caps:10,g:1,c:"Mainz 05"},{n:"Alexander Nübel",p:"GK",caps:3,g:0,c:"VfB Stuttgart"},{n:"David Raum",p:"DF",caps:36,g:1,c:"RB Leipzig"},{n:"Felix Nmecha",p:"MF",caps:7,g:1,c:"Borussia Dortmund"},{n:"Malick Thiaw",p:"DF",caps:5,g:0,c:"Newcastle United"},{n:"Lennart Karl",p:"MF",caps:3,g:0,c:"Bayern Munich"},{n:"Deniz Undav",p:"FW",caps:8,g:6,c:"VfB Stuttgart"}],
+  CRO:[{n:"Dominik Livaković",p:"GK",caps:73,g:0,c:"Dinamo Zagreb"},{n:"Dominik Kotarski",p:"GK",caps:3,g:0,c:"Copenhagen"},{n:"Ivor Pandur",p:"GK",caps:0,g:0,c:"Hull City"},{n:"Joško Gvardiol",p:"DF",caps:46,g:4,c:"Manchester City"},{n:"Duje Ćaleta-Car",p:"DF",caps:38,g:1,c:"Real Sociedad"},{n:"Josip Šutalo",p:"DF",caps:31,g:0,c:"Ajax"},{n:"Josip Stanišić",p:"DF",caps:29,g:0,c:"Bayern Munich"},{n:"Marin Pongračić",p:"DF",caps:18,g:0,c:"Fiorentina"},{n:"Martin Erlić",p:"DF",caps:12,g:1,c:"Midtjylland"},{n:"Luka Vušković",p:"DF",caps:4,g:1,c:"Hamburger SV"},{n:"Luka Modrić",p:"MF",caps:196,g:28,c:"Milan",cap:1},{n:"Mateo Kovačić",p:"MF",caps:111,g:5,c:"Manchester City"},{n:"Mario Pašalić",p:"MF",caps:83,g:11,c:"Atalanta"},{n:"Nikola Vlašić",p:"MF",caps:61,g:10,c:"Torino"},{n:"Luka Sučić",p:"MF",caps:19,g:1,c:"Real Sociedad"},{n:"Martin Baturina",p:"MF",caps:17,g:1,c:"Como"},{n:"Kristijan Jakić",p:"MF",caps:16,g:2,c:"FC Augsburg"},{n:"Petar Sučić",p:"MF",caps:15,g:1,c:"Inter Milan"},{n:"Nikola Moro",p:"MF",caps:9,g:0,c:"Bologna"},{n:"Toni Fruk",p:"MF",caps:7,g:1,c:"Rijeka"},{n:"Ivan Perišić",p:"FW",caps:152,g:38,c:"PSV Eindhoven"},{n:"Andrej Kramarić",p:"FW",caps:114,g:36,c:"TSG Hoffenheim"},{n:"Ante Budimir",p:"FW",caps:36,g:6,c:"Osasuna"},{n:"Marco Pašalić",p:"FW",caps:13,g:1,c:"Orlando City SC"},{n:"Petar Musa",p:"FW",caps:10,g:1,c:"FC Dallas"},{n:"Igor Matanović",p:"FW",caps:8,g:2,c:"SC Freiburg"}],
+  BEL:[{n:"Thibaut Courtois",p:"GK",caps:107,g:0,c:"Real Madrid"},{n:"Senne Lammens",p:"GK",caps:2,g:0,c:"Manchester United"},{n:"Mike Penders",p:"GK",caps:0,g:0,c:"Strasbourg"},{n:"Thomas Meunier",p:"DF",caps:78,g:10,c:"Lille"},{n:"Timothy Castagne",p:"DF",caps:62,g:2,c:"Fulham"},{n:"Arthur Theate",p:"DF",caps:32,g:1,c:"Eintracht Frankfurt"},{n:"Zeno Debast",p:"DF",caps:26,g:1,c:"Sporting CP"},{n:"Maxim De Cuyper",p:"DF",caps:17,g:4,c:"Brighton & Hove Albion"},{n:"Brandon Mechele",p:"DF",caps:7,g:1,c:"Club Brugge"},{n:"Koni De Winter",p:"DF",caps:7,g:0,c:"Milan"},{n:"Joaquin Seys",p:"DF",caps:4,g:0,c:"Club Brugge"},{n:"Nathan Ngoy",p:"DF",caps:2,g:0,c:"Lille"},{n:"Axel Witsel",p:"MF",caps:136,g:12,c:"Girona"},{n:"Kevin De Bruyne",p:"MF",caps:117,g:36,c:"Napoli"},{n:"Youri Tielemans",p:"MF",caps:83,g:12,c:"Aston Villa",cap:1},{n:"Hans Vanaken",p:"MF",caps:32,g:7,c:"Club Brugge"},{n:"Amadou Onana",p:"MF",caps:27,g:1,c:"Aston Villa"},{n:"Nicolas Raskin",p:"MF",caps:11,g:1,c:"Rangers"},{n:"Romelu Lukaku",p:"FW",caps:124,g:89,c:"Napoli"},{n:"Leandro Trossard",p:"FW",caps:50,g:11,c:"Arsenal"},{n:"Jérémy Doku",p:"FW",caps:41,g:7,c:"Manchester City"},{n:"Dodi Lukébakio",p:"FW",caps:29,g:5,c:"Benfica"},{n:"Charles De Ketelaere",p:"FW",caps:28,g:5,c:"Atalanta"},{n:"Alexis Saelemaekers",p:"FW",caps:23,g:2,c:"Milan"},{n:"Diego Moreira",p:"FW",caps:2,g:0,c:"Strasbourg"},{n:"Matias Fernandez-Pardo",p:"FW",caps:0,g:0,c:"Lille"}],
+  URU:[{n:"Fernando Muslera",p:"GK",caps:134,g:0,c:"Estudiantes"},{n:"Sergio Rochet",p:"GK",caps:35,g:0,c:"Internacional"},{n:"Santiago Mele",p:"GK",caps:8,g:0,c:"Monterrey"},{n:"José María Giménez",p:"DF",caps:99,g:8,c:"Atlético Madrid",cap:1},{n:"Matías Viña",p:"DF",caps:43,g:1,c:"River Plate"},{n:"Mathías Olivera",p:"DF",caps:35,g:2,c:"Napoli"},{n:"Guillermo Varela",p:"DF",caps:28,g:0,c:"Flamengo"},{n:"Ronald Araújo",p:"DF",caps:27,g:1,c:"Barcelona"},{n:"Sebastián Cáceres",p:"DF",caps:24,g:0,c:"América"},{n:"Joaquín Piquerez",p:"DF",caps:19,g:0,c:"Palmeiras"},{n:"Santiago Bueno",p:"DF",caps:8,g:0,c:"Wolverhampton Wanderers"},{n:"Rodrigo Bentancur",p:"MF",caps:74,g:3,c:"Tottenham Hotspur"},{n:"Federico Valverde",p:"MF",caps:73,g:9,c:"Real Madrid"},{n:"Giorgian de Arrascaeta",p:"MF",caps:60,g:13,c:"Flamengo"},{n:"Facundo Pellistri",p:"MF",caps:39,g:2,c:"Panathinaikos"},{n:"Manuel Ugarte",p:"MF",caps:36,g:1,c:"Manchester United"},{n:"Nicolás de la Cruz",p:"MF",caps:34,g:5,c:"Flamengo"},{n:"Brian Rodríguez",p:"MF",caps:32,g:4,c:"América"},{n:"Maximiliano Araújo",p:"MF",caps:28,g:3,c:"Sporting CP"},{n:"Agustín Canobbio",p:"MF",caps:15,g:1,c:"Fluminense"},{n:"Emiliano Martínez",p:"MF",caps:10,g:0,c:"Palmeiras"},{n:"Rodrigo Zalazar",p:"MF",caps:8,g:2,c:"Braga"},{n:"Juan Manuel Sanabria",p:"MF",caps:5,g:1,c:"Real Salt Lake"},{n:"Darwin Núñez",p:"FW",caps:38,g:13,c:"Al-Hilal"},{n:"Federico Viñas",p:"FW",caps:11,g:2,c:"Oviedo"},{n:"Rodrigo Aguirre",p:"FW",caps:10,g:3,c:"UANL"}],
+  COL:[{n:"David Ospina",p:"GK",caps:129,g:0,c:"Atlético Nacional"},{n:"Camilo Vargas",p:"GK",caps:40,g:0,c:"Atlas"},{n:"Álvaro Montero",p:"GK",caps:11,g:0,c:"Vélez Sarsfield"},{n:"Davinson Sánchez",p:"DF",caps:77,g:3,c:"Galatasaray"},{n:"Santiago Arias",p:"DF",caps:66,g:0,c:"Independiente"},{n:"Yerry Mina",p:"DF",caps:52,g:8,c:"Cagliari"},{n:"Daniel Muñoz",p:"DF",caps:44,g:3,c:"Crystal Palace"},{n:"Johan Mojica",p:"DF",caps:43,g:1,c:"Mallorca"},{n:"Jhon Lucumí",p:"DF",caps:35,g:1,c:"Bologna"},{n:"Deiver Machado",p:"DF",caps:14,g:0,c:"Nantes"},{n:"Willer Ditta",p:"DF",caps:3,g:0,c:"Cruz Azul"},{n:"James Rodríguez",p:"MF",caps:124,g:31,c:"Minnesota United FC",cap:1},{n:"Jefferson Lerma",p:"MF",caps:64,g:5,c:"Crystal Palace"},{n:"Juan Fernando Quintero",p:"MF",caps:47,g:6,c:"River Plate"},{n:"Jhon Arias",p:"MF",caps:36,g:4,c:"Palmeiras"},{n:"Richard Ríos",p:"MF",caps:30,g:2,c:"Benfica"},{n:"Kevin Castaño",p:"MF",caps:24,g:0,c:"River Plate"},{n:"Jorge Carrascal",p:"MF",caps:22,g:2,c:"Flamengo"},{n:"Jaminton Campaz",p:"MF",caps:9,g:1,c:"Rosario Central"},{n:"Juan Portilla",p:"MF",caps:8,g:0,c:"Athletico Paranaense"},{n:"Gustavo Puerta",p:"MF",caps:4,g:1,c:"Racing Santander"},{n:"Luis Díaz",p:"FW",caps:72,g:21,c:"Bayern Munich"},{n:"Jhon Córdoba",p:"FW",caps:21,g:6,c:"Krasnodar"},{n:"Luis Suárez",p:"FW",caps:10,g:4,c:"Sporting CP"},{n:"Cucho Hernández",p:"FW",caps:7,g:2,c:"Real Betis"},{n:"Andrés Gómez",p:"FW",caps:6,g:2,c:"Vasco da Gama"}],
+  MEX:[{n:"Guillermo Ochoa",p:"GK",caps:152,g:0,c:"AEL Limassol"},{n:"Raúl Rangel",p:"GK",caps:13,g:0,c:"Guadalajara"},{n:"Carlos Acevedo",p:"GK",caps:7,g:0,c:"Santos Laguna"},{n:"Jesús Gallardo",p:"DF",caps:120,g:3,c:"Toluca"},{n:"César Montes",p:"DF",caps:66,g:4,c:"Lokomotiv Moscow"},{n:"Jorge Sánchez",p:"DF",caps:58,g:3,c:"PAOK"},{n:"Johan Vásquez",p:"DF",caps:45,g:2,c:"Genoa"},{n:"Israel Reyes",p:"DF",caps:33,g:2,c:"América"},{n:"Mateo Chávez",p:"DF",caps:9,g:0,c:"AZ"},{n:"Edson Álvarez",p:"MF",caps:97,g:7,c:"Fenerbahçe",cap:1},{n:"Orbelín Pineda",p:"MF",caps:91,g:12,c:"AEK Athens"},{n:"Roberto Alvarado",p:"MF",caps:66,g:5,c:"Guadalajara"},{n:"Luis Romo",p:"MF",caps:62,g:4,c:"Guadalajara"},{n:"Luis Chávez",p:"MF",caps:44,g:4,c:"Dynamo Moscow"},{n:"Érik Lira",p:"MF",caps:24,g:0,c:"Cruz Azul"},{n:"Gilberto Mora",p:"MF",caps:7,g:0,c:"Tijuana"},{n:"Brian Gutiérrez",p:"MF",caps:6,g:2,c:"Guadalajara"},{n:"Obed Vargas",p:"MF",caps:6,g:0,c:"Atlético Madrid"},{n:"Álvaro Fidalgo",p:"MF",caps:3,g:0,c:"Real Betis"},{n:"Raúl Jiménez",p:"FW",caps:123,g:44,c:"Fulham"},{n:"Alexis Vega",p:"FW",caps:51,g:7,c:"Toluca"},{n:"Santiago Giménez",p:"FW",caps:47,g:6,c:"Milan"},{n:"César Huerta",p:"FW",caps:26,g:3,c:"Anderlecht"},{n:"Julián Quiñones",p:"FW",caps:21,g:2,c:"Al-Qadsiah"},{n:"Guillermo Martínez",p:"FW",caps:11,g:3,c:"UNAM"},{n:"Armando González",p:"FW",caps:7,g:1,c:"Guadalajara"}],
+  USA:[{n:"Matt Turner",p:"GK",caps:54,g:0,c:"New England Revolution"},{n:"Sergiño Dest",p:"DF",caps:38,g:3,c:"PSV Eindhoven"},{n:"Chris Richards",p:"DF",caps:36,g:3,c:"Crystal Palace"},{n:"Tyler Adams",p:"MF",caps:53,g:2,c:"Bournemouth"},{n:"Antonee Robinson",p:"DF",caps:53,g:4,c:"Fulham"},{n:"Auston Trusty",p:"DF",caps:7,g:0,c:"Celtic"},{n:"Giovanni Reyna",p:"MF",caps:37,g:9,c:"Borussia Mönchengladbach"},{n:"Weston McKennie",p:"MF",caps:65,g:12,c:"Juventus"},{n:"Ricardo Pepi",p:"FW",caps:36,g:13,c:"PSV Eindhoven"},{n:"Christian Pulisic",p:"FW",caps:85,g:33,c:"Milan"},{n:"Brenden Aaronson",p:"FW",caps:57,g:9,c:"Leeds United"},{n:"Miles Robinson",p:"DF",caps:39,g:3,c:"FC Cincinnati"},{n:"Tim Ream",p:"DF",caps:81,g:1,c:"Charlotte FC",cap:1},{n:"Sebastian Berhalter",p:"MF",caps:12,g:1,c:"Vancouver Whitecaps FC"},{n:"Cristian Roldan",p:"MF",caps:46,g:0,c:"Seattle Sounders FC"},{n:"Alex Freeman",p:"DF",caps:16,g:2,c:"Villarreal"},{n:"Malik Tillman",p:"MF",caps:29,g:3,c:"Bayer Leverkusen"},{n:"Maximilian Arfsten",p:"DF",caps:19,g:1,c:"Columbus Crew"},{n:"Haji Wright",p:"FW",caps:20,g:7,c:"Coventry City"},{n:"Folarin Balogun",p:"FW",caps:26,g:9,c:"Monaco"},{n:"Timothy Weah",p:"FW",caps:50,g:7,c:"Marseille"},{n:"Mark McKenzie",p:"DF",caps:28,g:0,c:"Toulouse"},{n:"Joe Scally",p:"DF",caps:25,g:0,c:"Borussia Mönchengladbach"},{n:"Matt Freese",p:"GK",caps:14,g:0,c:"New York City FC"},{n:"Chris Brady",p:"GK",caps:1,g:0,c:"Chicago Fire FC"},{n:"Alejandro Zendejas",p:"FW",caps:14,g:2,c:"América"}],
+  JPN:[{n:"Zion Suzuki",p:"GK",caps:24,g:0,c:"Parma"},{n:"Yukinari Sugawara",p:"DF",caps:21,g:2,c:"Werder Bremen"},{n:"Shōgo Taniguchi",p:"DF",caps:38,g:1,c:"Sint-Truiden"},{n:"Kō Itakura",p:"DF",caps:40,g:2,c:"Ajax"},{n:"Yūto Nagatomo",p:"DF",caps:145,g:4,c:"FC Tokyo"},{n:"Wataru Endo",p:"MF",caps:73,g:4,c:"Liverpool",cap:1},{n:"Ao Tanaka",p:"MF",caps:38,g:8,c:"Leeds United"},{n:"Takefusa Kubo",p:"MF",caps:49,g:7,c:"Real Sociedad"},{n:"Keisuke Gotō",p:"FW",caps:4,g:0,c:"Sint-Truiden"},{n:"Ritsu Dōan",p:"MF",caps:65,g:11,c:"Eintracht Frankfurt"},{n:"Daizen Maeda",p:"FW",caps:27,g:4,c:"Celtic"},{n:"Keisuke Ōsako",p:"GK",caps:11,g:0,c:"Sanfrecce Hiroshima"},{n:"Keito Nakamura",p:"MF",caps:25,g:10,c:"Reims"},{n:"Junya Itō",p:"MF",caps:69,g:15,c:"Genk"},{n:"Daichi Kamada",p:"MF",caps:49,g:12,c:"Crystal Palace"},{n:"Tsuyoshi Watanabe",p:"DF",caps:11,g:0,c:"Feyenoord"},{n:"Yuito Suzuki",p:"FW",caps:6,g:0,c:"SC Freiburg"},{n:"Ayase Ueda",p:"FW",caps:39,g:16,c:"Feyenoord"},{n:"Kōki Ogawa",p:"FW",caps:15,g:11,c:"NEC"},{n:"Ayumu Seko",p:"DF",caps:14,g:0,c:"Le Havre"},{n:"Hiroki Itō",p:"DF",caps:24,g:1,c:"Bayern Munich"},{n:"Takehiro Tomiyasu",p:"DF",caps:43,g:1,c:"Ajax"},{n:"Tomoki Hayakawa",p:"GK",caps:4,g:0,c:"Kashima Antlers"},{n:"Kaishū Sano",p:"MF",caps:13,g:0,c:"Mainz 05"},{n:"Junnosuke Suzuki",p:"DF",caps:6,g:0,c:"Copenhagen"},{n:"Kento Shiogai",p:"FW",caps:2,g:0,c:"VfL Wolfsburg"}],
+  KOR:[{n:"Kim Seung-gyu",p:"GK",caps:86,g:0,c:"FC Tokyo"},{n:"Jo Hyeon-woo",p:"GK",caps:48,g:0,c:"Ulsan HD"},{n:"Song Bum-keun",p:"GK",caps:2,g:0,c:"Jeonbuk Hyundai Motors"},{n:"Kim Min-jae",p:"DF",caps:78,g:4,c:"Bayern Munich"},{n:"Kim Moon-hwan",p:"DF",caps:35,g:0,c:"Daejeon Hana Citizen"},{n:"Seol Young-woo",p:"DF",caps:33,g:0,c:"Red Star Belgrade"},{n:"Lee Tae-seok",p:"DF",caps:14,g:1,c:"Austria Wien"},{n:"Park Jin-seob",p:"DF",caps:13,g:1,c:"Zhejiang"},{n:"Kim Tae-hyeon",p:"DF",caps:7,g:0,c:"Kashima Antlers"},{n:"Lee Han-beom",p:"DF",caps:7,g:0,c:"Midtjylland"},{n:"Jens Castrop",p:"DF",caps:6,g:0,c:"Borussia Mönchengladbach"},{n:"Lee Ki-hyuk",p:"DF",caps:2,g:0,c:"Gangwon FC"},{n:"Cho Wi-je",p:"DF",caps:0,g:0,c:"Jeonbuk Hyundai Motors"},{n:"Lee Jae-sung",p:"MF",caps:104,g:15,c:"Mainz 05"},{n:"Hwang Hee-chan",p:"MF",caps:78,g:17,c:"Wolverhampton Wanderers"},{n:"Hwang In-beom",p:"MF",caps:72,g:6,c:"Feyenoord"},{n:"Lee Kang-in",p:"MF",caps:46,g:11,c:"Paris Saint-Germain"},{n:"Paik Seung-ho",p:"MF",caps:26,g:3,c:"Birmingham City"},{n:"Kim Jin-gyu",p:"MF",caps:21,g:3,c:"Jeonbuk Hyundai Motors"},{n:"Lee Dong-gyeong",p:"MF",caps:17,g:3,c:"Ulsan HD"},{n:"Bae Jun-ho",p:"MF",caps:13,g:2,c:"Stoke City"},{n:"Eom Ji-sung",p:"MF",caps:9,g:2,c:"Swansea City"},{n:"Yang Hyun-jun",p:"MF",caps:8,g:0,c:"Celtic"},{n:"Son Heung-min",p:"FW",caps:143,g:56,c:"Los Angeles FC",cap:1},{n:"Cho Gue-sung",p:"FW",caps:43,g:12,c:"Midtjylland"},{n:"Oh Hyeon-gyu",p:"FW",caps:26,g:6,c:"Beşiktaş"}],
+  MAR:[{n:"Yassine Bounou",p:"GK",caps:89,g:0,c:"Al-Hilal"},{n:"Munir Mohamedi",p:"GK",caps:51,g:0,c:"RS Berkane"},{n:"Ahmed Reda Tagnaouti",p:"GK",caps:3,g:0,c:"AS FAR"},{n:"Achraf Hakimi",p:"DF",caps:95,g:11,c:"Paris Saint-Germain",cap:1},{n:"Nayef Aguerd",p:"DF",caps:64,g:2,c:"Marseille"},{n:"Noussair Mazraoui",p:"DF",caps:43,g:2,c:"Manchester United"},{n:"Youssef Belammari",p:"DF",caps:16,g:0,c:"Al Ahly"},{n:"Anass Salah-Eddine",p:"DF",caps:8,g:0,c:"PSV Eindhoven"},{n:"Chadi Riad",p:"DF",caps:4,g:1,c:"Crystal Palace"},{n:"Issa Diop",p:"DF",caps:2,g:0,c:"Fulham"},{n:"Zakaria El Ouahdi",p:"DF",caps:2,g:0,c:"Genk"},{n:"Redouane Halhal",p:"DF",caps:1,g:0,c:"Mechelen"},{n:"Sofyan Amrabat",p:"MF",caps:73,g:0,c:"Real Betis"},{n:"Azzedine Ounahi",p:"MF",caps:47,g:9,c:"Girona"},{n:"Bilal El Khannouss",p:"MF",caps:35,g:3,c:"VfB Stuttgart"},{n:"Ismael Saibari",p:"MF",caps:28,g:7,c:"PSV Eindhoven"},{n:"Neil El Aynaoui",p:"MF",caps:15,g:2,c:"Roma"},{n:"Samir El Mourabet",p:"MF",caps:2,g:0,c:"Strasbourg"},{n:"Ayyoub Bouaddi",p:"MF",caps:1,g:0,c:"Lille"},{n:"Ayoub El Kaabi",p:"FW",caps:57,g:22,c:"Olympiacos"},{n:"Soufiane Rahimi",p:"FW",caps:35,g:11,c:"Al-Ain"},{n:"Abde Ezzalzouli",p:"FW",caps:35,g:2,c:"Real Betis"},{n:"Brahim Díaz",p:"FW",caps:24,g:13,c:"Real Madrid"},{n:"Chemsdine Talbi",p:"FW",caps:5,g:0,c:"Sunderland"},{n:"Gessime Yassine",p:"FW",caps:3,g:0,c:"Strasbourg"},{n:"Ayoube Amaimouni",p:"FW",caps:0,g:0,c:"Eintracht Frankfurt"}],
+  SEN:[{n:"Édouard Mendy",p:"GK",caps:56,g:0,c:"Al-Ahli"},{n:"Mory Diaw",p:"GK",caps:5,g:0,c:"Le Havre"},{n:"Yehvann Diouf",p:"GK",caps:2,g:0,c:"Nice"},{n:"Kalidou Koulibaly",p:"DF",caps:102,g:2,c:"Al-Hilal",cap:1},{n:"Krépin Diatta",p:"DF",caps:60,g:2,c:"Monaco"},{n:"Moussa Niakhaté",p:"DF",caps:30,g:0,c:"Lyon"},{n:"Ismail Jakobs",p:"DF",caps:29,g:0,c:"Galatasaray"},{n:"Abdoulaye Seck",p:"DF",caps:22,g:4,c:"Maccabi Haifa"},{n:"El Hadji Malick Diouf",p:"DF",caps:19,g:1,c:"West Ham United"},{n:"Mamadou Sarr",p:"DF",caps:7,g:0,c:"Chelsea"},{n:"Antoine Mendy",p:"DF",caps:6,g:0,c:"Nice"},{n:"Ilay Camara",p:"DF",caps:3,g:0,c:"Anderlecht"},{n:"Moustapha Mbow",p:"DF",caps:0,g:0,c:"Paris FC"},{n:"Idrissa Gueye",p:"MF",caps:130,g:7,c:"Everton"},{n:"Pape Gueye",p:"MF",caps:41,g:5,c:"Villarreal"},{n:"Pape Matar Sarr",p:"MF",caps:39,g:4,c:"Tottenham Hotspur"},{n:"Lamine Camara",p:"MF",caps:32,g:7,c:"Monaco"},{n:"Pathé Ciss",p:"MF",caps:29,g:0,c:"Rayo Vallecano"},{n:"Habib Diarra",p:"MF",caps:20,g:4,c:"Sunderland"},{n:"Bara Sapoko Ndiaye",p:"MF",caps:1,g:0,c:"Bayern Munich"},{n:"Sadio Mané",p:"FW",caps:127,g:55,c:"Al-Nassr"},{n:"Ismaïla Sarr",p:"FW",caps:82,g:19,c:"Crystal Palace"},{n:"Iliman Ndiaye",p:"FW",caps:39,g:4,c:"Everton"},{n:"Nicolas Jackson",p:"FW",caps:32,g:8,c:"Bayern Munich"},{n:"Bamba Dieng",p:"FW",caps:22,g:2,c:"Lorient"},{n:"Cherif Ndiaye",p:"FW",caps:18,g:4,c:"Samsunspor"},{n:"Ibrahim Mbaye",p:"FW",caps:10,g:3,c:"Paris Saint-Germain"},{n:"Assane Diao",p:"FW",caps:5,g:0,c:"Como"}],
+  CIV:[{n:"Yahia Fofana",p:"GK",caps:34,g:0,c:"Çaykur Rizespor"},{n:"Alban Lafont",p:"GK",caps:4,g:0,c:"Panathinaikos"},{n:"Mohamed Koné",p:"GK",caps:0,g:0,c:"Charleroi"},{n:"Ghislain Konan",p:"DF",caps:53,g:0,c:"Gil Vicente"},{n:"Odilon Kossounou",p:"DF",caps:35,g:0,c:"Atalanta"},{n:"Wilfried Singo",p:"DF",caps:33,g:1,c:"Galatasaray"},{n:"Evan Ndicka",p:"DF",caps:28,g:0,c:"Roma"},{n:"Emmanuel Agbadou",p:"DF",caps:19,g:2,c:"Beşiktaş"},{n:"Guéla Doué",p:"DF",caps:19,g:2,c:"Strasbourg"},{n:"Ousmane Diomande",p:"DF",caps:14,g:1,c:"Sporting CP"},{n:"Christopher Opéri",p:"DF",caps:11,g:0,c:"İstanbul Başakşehir"},{n:"Franck Kessié",p:"MF",caps:102,g:15,c:"Al-Ahli",cap:1},{n:"Jean Michaël Seri",p:"MF",caps:65,g:4,c:"Maribor"},{n:"Ibrahim Sangaré",p:"MF",caps:57,g:12,c:"Nottingham Forest"},{n:"Seko Fofana",p:"MF",caps:31,g:7,c:"Porto"},{n:"Christ Inao Oulaï",p:"MF",caps:8,g:0,c:"Trabzonspor"},{n:"Parfait Guiagon",p:"MF",caps:5,g:0,c:"Charleroi"},{n:"Nicolas Pépé",p:"FW",caps:54,g:12,c:"Villarreal"},{n:"Oumar Diakité",p:"FW",caps:28,g:6,c:"Cercle Brugge"},{n:"Simon Adingra",p:"FW",caps:28,g:5,c:"Monaco"},{n:"Evann Guessand",p:"FW",caps:21,g:4,c:"Crystal Palace"},{n:"Amad Diallo",p:"FW",caps:18,g:5,c:"Manchester United"},{n:"Yan Diomande",p:"FW",caps:9,g:3,c:"RB Leipzig"},{n:"Bazoumana Touré",p:"FW",caps:5,g:2,c:"TSG Hoffenheim"},{n:"Elye Wahi",p:"FW",caps:1,g:0,c:"Nice"},{n:"Ange-Yoan Bonny",p:"FW",caps:0,g:0,c:"Inter Milan"}],
+  EGY:[{n:"Mohamed El Shenawy",p:"GK",caps:76,g:0,c:"Al Ahly"},{n:"Mostafa Shobeir",p:"GK",caps:8,g:0,c:"Al Ahly"},{n:"Mohamed Alaa",p:"GK",caps:0,g:0,c:"El Gouna"},{n:"El Mahdy Soliman",p:"GK",caps:0,g:0,c:"Zamalek"},{n:"Hamdy Fathy",p:"DF",caps:62,g:3,c:"Al-Wakrah"},{n:"Ramy Rabia",p:"DF",caps:44,g:5,c:"Al-Ain"},{n:"Mohamed Hany",p:"DF",caps:41,g:0,c:"Al Ahly"},{n:"Ahmed Fatouh",p:"DF",caps:38,g:1,c:"Zamalek"},{n:"Mohamed Abdelmonem",p:"DF",caps:35,g:3,c:"Nice"},{n:"Yasser Ibrahim",p:"DF",caps:16,g:1,c:"Al Ahly"},{n:"Hossam Abdelmaguid",p:"DF",caps:13,g:0,c:"Zamalek"},{n:"Karim Hafez",p:"DF",caps:8,g:0,c:"Pyramids"},{n:"Tarek Alaa",p:"DF",caps:2,g:0,c:"ZED"},{n:"Marwan Attia",p:"MF",caps:33,g:1,c:"Al Ahly"},{n:"Emam Ashour",p:"MF",caps:28,g:0,c:"Al Ahly"},{n:"Mohanad Lasheen",p:"MF",caps:22,g:0,c:"Pyramids"},{n:"Mahmoud Saber",p:"MF",caps:15,g:1,c:"ZED"},{n:"Nabil Emad",p:"MF",caps:12,g:0,c:"Al-Najma"},{n:"Mostafa Ziko",p:"MF",caps:1,g:1,c:"Pyramids"},{n:"Mohamed Salah",p:"FW",caps:116,g:67,c:"Liverpool",cap:1},{n:"Trézéguet",p:"FW",caps:95,g:23,c:"Al Ahly"},{n:"Zizo",p:"FW",caps:62,g:5,c:"Al Ahly"},{n:"Omar Marmoush",p:"FW",caps:48,g:11,c:"Manchester City"},{n:"Ibrahim Adel",p:"FW",caps:23,g:3,c:"Nordsjælland"},{n:"Haissem Hassan",p:"FW",caps:3,g:0,c:"Oviedo"},{n:"Hamza Abdelkarim",p:"FW",caps:1,g:0,c:"Barcelona"}],
+  NOR:[{n:"Ørjan Nyland",p:"GK",caps:69,g:0,c:"Sevilla"},{n:"Morten Thorsby",p:"MF",caps:30,g:0,c:"Cremonese"},{n:"Kristoffer Ajer",p:"DF",caps:50,g:2,c:"Brentford"},{n:"Leo Østigård",p:"DF",caps:36,g:1,c:"Genoa"},{n:"David Møller Wolfe",p:"DF",caps:20,g:1,c:"Wolverhampton Wanderers"},{n:"Patrick Berg",p:"MF",caps:41,g:0,c:"Bodø/Glimt"},{n:"Alexander Sørloth",p:"FW",caps:70,g:26,c:"Atlético Madrid"},{n:"Sander Berge",p:"MF",caps:64,g:1,c:"Fulham"},{n:"Erling Haaland",p:"FW",caps:49,g:55,c:"Manchester City"},{n:"Martin Ødegaard",p:"MF",caps:67,g:4,c:"Arsenal",cap:1},{n:"Jørgen Strand Larsen",p:"FW",caps:26,g:4,c:"Crystal Palace"},{n:"Sander Tangvik",p:"GK",caps:0,g:0,c:"Hamburger SV"},{n:"Egil Selvik",p:"GK",caps:6,g:0,c:"Watford"},{n:"Fredrik Aursnes",p:"MF",caps:20,g:1,c:"Benfica"},{n:"Fredrik André Bjørkan",p:"DF",caps:19,g:1,c:"Bodø/Glimt"},{n:"Marcus Holmgren Pedersen",p:"DF",caps:31,g:0,c:"Torino"},{n:"Torbjørn Heggem",p:"DF",caps:13,g:0,c:"Bologna"},{n:"Kristian Thorstvedt",p:"MF",caps:35,g:4,c:"Sassuolo"},{n:"Thelo Aasgaard",p:"MF",caps:6,g:5,c:"Rangers"},{n:"Antonio Nusa",p:"MF",caps:22,g:7,c:"RB Leipzig"},{n:"Andreas Schjelderup",p:"MF",caps:10,g:1,c:"Benfica"},{n:"Oscar Bobb",p:"MF",caps:18,g:2,c:"Fulham"},{n:"Jens Petter Hauge",p:"MF",caps:14,g:1,c:"Bodø/Glimt"},{n:"Sondre Langås",p:"DF",caps:2,g:0,c:"Derby County"},{n:"Henrik Falchener",p:"DF",caps:1,g:0,c:"Viking"},{n:"Julian Ryerson",p:"DF",caps:41,g:1,c:"Borussia Dortmund"}],
+  SUI:[{n:"Gregor Kobel",p:"GK",caps:20,g:0,c:"Borussia Dortmund"},{n:"Miro Muheim",p:"DF",caps:9,g:0,c:"Hamburger SV"},{n:"Silvan Widmer",p:"DF",caps:59,g:5,c:"Mainz 05"},{n:"Nico Elvedi",p:"DF",caps:66,g:3,c:"Borussia Mönchengladbach"},{n:"Manuel Akanji",p:"DF",caps:80,g:4,c:"Inter Milan"},{n:"Denis Zakaria",p:"MF",caps:64,g:3,c:"Monaco"},{n:"Breel Embolo",p:"FW",caps:86,g:24,c:"Rennes"},{n:"Remo Freuler",p:"MF",caps:87,g:11,c:"Bologna"},{n:"Johan Manzambi",p:"MF",caps:11,g:3,c:"SC Freiburg"},{n:"Granit Xhaka",p:"MF",caps:145,g:17,c:"Sunderland",cap:1},{n:"Dan Ndoye",p:"FW",caps:30,g:7,c:"Nottingham Forest"},{n:"Yvon Mvogo",p:"GK",caps:13,g:0,c:"Lorient"},{n:"Ricardo Rodriguez",p:"DF",caps:137,g:9,c:"Real Betis"},{n:"Ardon Jashari",p:"MF",caps:7,g:0,c:"Milan"},{n:"Djibril Sow",p:"MF",caps:51,g:0,c:"Sevilla"},{n:"Christian Fassnacht",p:"MF",caps:22,g:5,c:"Young Boys"},{n:"Rubén Vargas",p:"FW",caps:61,g:11,c:"Sevilla"},{n:"Eray Cömert",p:"DF",caps:21,g:0,c:"Valencia"},{n:"Noah Okafor",p:"FW",caps:24,g:2,c:"Leeds United"},{n:"Michel Aebischer",p:"MF",caps:39,g:2,c:"Pisa"},{n:"Marvin Keller",p:"GK",caps:1,g:0,c:"Young Boys"},{n:"Fabian Rieder",p:"MF",caps:27,g:1,c:"FC Augsburg"},{n:"Zeki Amdouni",p:"FW",caps:28,g:11,c:"Burnley"},{n:"Aurèle Amenda",p:"DF",caps:6,g:0,c:"Eintracht Frankfurt"},{n:"Luca Jaquez",p:"DF",caps:3,g:0,c:"VfB Stuttgart"},{n:"Cedric Itten",p:"FW",caps:14,g:5,c:"Fortuna Düsseldorf"}],
+  AUS:[{n:"Mathew Ryan",p:"GK",caps:104,g:0,c:"Levante",cap:1},{n:"Miloš Degenek",p:"DF",caps:56,g:1,c:"APOEL"},{n:"Alessandro Circati",p:"DF",caps:12,g:1,c:"Parma"},{n:"Jacob Italiano",p:"DF",caps:4,g:0,c:"GAK"},{n:"Jordan Bos",p:"DF",caps:26,g:4,c:"Feyenoord"},{n:"Jason Geria",p:"DF",caps:13,g:0,c:"Albirex Niigata"},{n:"Mathew Leckie",p:"FW",caps:79,g:14,c:"Melbourne City"},{n:"Connor Metcalfe",p:"MF",caps:35,g:1,c:"FC St. Pauli"},{n:"Mohamed Touré",p:"FW",caps:9,g:2,c:"Norwich City"},{n:"Ajdin Hrustic",p:"MF",caps:37,g:4,c:"Heracles Almelo"},{n:"Awer Mabil",p:"FW",caps:38,g:10,c:"Castellón"},{n:"Paul Izzo",p:"GK",caps:4,g:0,c:"Randers"},{n:"Aiden O'Neill",p:"MF",caps:30,g:0,c:"New York City FC"},{n:"Cammy Devlin",p:"MF",caps:4,g:0,c:"Heart of Midlothian"},{n:"Kai Trewin",p:"DF",caps:5,g:0,c:"New York City FC"},{n:"Aziz Behich",p:"DF",caps:83,g:3,c:"Melbourne City"},{n:"Nestory Irankunda",p:"FW",caps:14,g:5,c:"Watford"},{n:"Patrick Beach",p:"GK",caps:1,g:0,c:"Melbourne City"},{n:"Harry Souttar",p:"DF",caps:37,g:11,c:"Leicester City"},{n:"Cristian Volpato",p:"FW",caps:0,g:0,c:"Sassuolo"},{n:"Cameron Burgess",p:"DF",caps:26,g:0,c:"Swansea City"},{n:"Jackson Irvine",p:"MF",caps:81,g:14,c:"FC St. Pauli"},{n:"Nishan Velupillay",p:"FW",caps:7,g:3,c:"Melbourne Victory"},{n:"Paul Okon-Engstler",p:"MF",caps:5,g:0,c:"Sydney FC"},{n:"Lucas Herrington",p:"DF",caps:3,g:0,c:"Colorado Rapids"},{n:"Tete Yengi",p:"FW",caps:0,g:0,c:"Machida Zelvia"}],
+  CAN:[{n:"Dayne St. Clair",p:"GK",caps:19,g:0,c:"Inter Miami CF"},{n:"Alistair Johnston",p:"DF",caps:56,g:1,c:"Celtic"},{n:"Luc de Fougerolles",p:"DF",caps:11,g:0,c:"Dender"},{n:"Alfie Jones",p:"DF",caps:1,g:0,c:"Middlesbrough"},{n:"Joel Waterman",p:"DF",caps:17,g:0,c:"Chicago Fire FC"},{n:"Mathieu Choinière",p:"MF",caps:22,g:0,c:"Los Angeles FC"},{n:"Stephen Eustáquio",p:"MF",caps:54,g:4,c:"Los Angeles FC"},{n:"Ismaël Koné",p:"MF",caps:38,g:4,c:"Sassuolo"},{n:"Cyle Larin",p:"FW",caps:88,g:30,c:"Southampton"},{n:"Jonathan David",p:"FW",caps:75,g:39,c:"Juventus"},{n:"Liam Millar",p:"MF",caps:39,g:1,c:"Hull City"},{n:"Tani Oluwaseyi",p:"FW",caps:22,g:2,c:"Villarreal"},{n:"Derek Cornelius",p:"DF",caps:42,g:1,c:"Rangers"},{n:"Jacob Shaffelburg",p:"MF",caps:31,g:6,c:"Los Angeles FC"},{n:"Moïse Bombito",p:"DF",caps:19,g:0,c:"Nice"},{n:"Maxime Crépeau",p:"GK",caps:30,g:0,c:"Orlando City SC"},{n:"Tajon Buchanan",p:"MF",caps:58,g:8,c:"Villarreal"},{n:"Owen Goodman",p:"GK",caps:0,g:0,c:"Barnsley"},{n:"Alphonso Davies",p:"DF",caps:58,g:15,c:"Bayern Munich",cap:1},{n:"Ali Ahmed",p:"MF",caps:24,g:1,c:"Norwich City"},{n:"Jonathan Osorio",p:"MF",caps:89,g:9,c:"Toronto FC"},{n:"Richie Laryea",p:"DF",caps:73,g:1,c:"Toronto FC"},{n:"Niko Sigur",p:"DF",caps:17,g:2,c:"Hajduk Split"},{n:"Promise David",p:"FW",caps:8,g:3,c:"Union Saint-Gilloise"},{n:"Nathan Saliba",p:"MF",caps:13,g:2,c:"Anderlecht"}],
+  ECU:[{n:"Hernán Galíndez",p:"GK",caps:34,g:0,c:"Huracán"},{n:"Félix Torres",p:"DF",caps:48,g:5,c:"Internacional"},{n:"Piero Hincapié",p:"DF",caps:51,g:3,c:"Arsenal"},{n:"Joel Ordóñez",p:"DF",caps:16,g:0,c:"Club Brugge"},{n:"Jordy Alcívar",p:"MF",caps:10,g:1,c:"Independiente del Valle"},{n:"Willian Pacho",p:"DF",caps:34,g:2,c:"Paris Saint-Germain"},{n:"Pervis Estupiñán",p:"DF",caps:53,g:4,c:"Milan"},{n:"Denil Castillo",p:"MF",caps:5,g:0,c:"Midtjylland"},{n:"John Yeboah",p:"MF",caps:22,g:3,c:"Venezia"},{n:"Kendry Páez",p:"MF",caps:25,g:2,c:"River Plate"},{n:"Kevin Rodríguez",p:"FW",caps:31,g:2,c:"Union Saint-Gilloise"},{n:"Moisés Ramírez",p:"GK",caps:7,g:0,c:"Kifisia"},{n:"Enner Valencia",p:"FW",caps:105,g:49,c:"Pachuca",cap:1},{n:"Alan Minda",p:"MF",caps:19,g:2,c:"Atlético Mineiro"},{n:"Pedro Vite",p:"MF",caps:16,g:1,c:"UNAM"},{n:"Anthony Valencia",p:"FW",caps:2,g:1,c:"Antwerp"},{n:"Ángelo Preciado",p:"DF",caps:54,g:0,c:"Atlético Mineiro"},{n:"Jordy Caicedo",p:"FW",caps:19,g:3,c:"Huracán"},{n:"Gonzalo Plata",p:"MF",caps:49,g:8,c:"Flamengo"},{n:"Nilson Angulo",p:"FW",caps:13,g:1,c:"Sunderland"},{n:"Alan Franco",p:"MF",caps:57,g:1,c:"Atlético Mineiro"},{n:"Gonzalo Valle",p:"GK",caps:3,g:0,c:"LDU Quito"},{n:"Moisés Caicedo",p:"MF",caps:60,g:3,c:"Chelsea"},{n:"Yaimar Medina",p:"MF",caps:5,g:0,c:"Genk"},{n:"Jackson Porozo",p:"DF",caps:9,g:1,c:"Tijuana"},{n:"Jeremy Arévalo",p:"FW",caps:3,g:0,c:"VfB Stuttgart"}],
+  AUT:[{n:"Alexander Schlager",p:"GK",caps:25,g:0,c:"Red Bull Salzburg"},{n:"David Affengruber",p:"DF",caps:1,g:0,c:"Elche"},{n:"Kevin Danso",p:"DF",caps:31,g:0,c:"Tottenham Hotspur"},{n:"Xaver Schlager",p:"MF",caps:50,g:4,c:"RB Leipzig"},{n:"Stefan Posch",p:"DF",caps:51,g:5,c:"Mainz 05"},{n:"Nicolas Seiwald",p:"MF",caps:46,g:1,c:"RB Leipzig"},{n:"Marko Arnautović",p:"FW",caps:132,g:47,c:"Red Star Belgrade"},{n:"David Alaba",p:"DF",caps:112,g:15,c:"Real Madrid",cap:1},{n:"Marcel Sabitzer",p:"MF",caps:97,g:25,c:"Borussia Dortmund"},{n:"Florian Grillitsch",p:"MF",caps:58,g:1,c:"Braga"},{n:"Michael Gregoritsch",p:"FW",caps:74,g:24,c:"FC Augsburg"},{n:"Florian Wiegele",p:"GK",caps:1,g:0,c:"Viktoria Plzeň"},{n:"Patrick Pentz",p:"GK",caps:18,g:0,c:"Brøndby"},{n:"Saša Kalajdžić",p:"FW",caps:21,g:4,c:"LASK"},{n:"Philipp Lienhart",p:"DF",caps:40,g:3,c:"SC Freiburg"},{n:"Phillipp Mwene",p:"DF",caps:29,g:0,c:"Mainz 05"},{n:"Carney Chukwuemeka",p:"MF",caps:2,g:1,c:"Borussia Dortmund"},{n:"Romano Schmid",p:"MF",caps:33,g:3,c:"Werder Bremen"},{n:"Christoph Baumgartner",p:"MF",caps:58,g:19,c:"RB Leipzig"},{n:"Konrad Laimer",p:"MF",caps:56,g:7,c:"Bayern Munich"},{n:"Patrick Wimmer",p:"MF",caps:30,g:1,c:"VfL Wolfsburg"},{n:"Alexander Prass",p:"DF",caps:18,g:0,c:"TSG Hoffenheim"},{n:"Marco Friedl",p:"DF",caps:10,g:0,c:"Werder Bremen"},{n:"Paul Wanner",p:"MF",caps:2,g:0,c:"PSV Eindhoven"},{n:"Michael Svoboda",p:"DF",caps:4,g:0,c:"Venezia"},{n:"Alessandro Schöpf",p:"MF",caps:35,g:6,c:"Wolfsberger AC"}],
+  SWE:[{n:"Jacob Widell Zetterström",p:"GK",caps:3,g:0,c:"Derby County"},{n:"Gustaf Lagerbielke",p:"DF",caps:10,g:2,c:"Braga"},{n:"Victor Lindelöf",p:"DF",caps:76,g:3,c:"Aston Villa",cap:1},{n:"Isak Hien",p:"DF",caps:28,g:0,c:"Atalanta"},{n:"Gabriel Gudmundsson",p:"DF",caps:23,g:0,c:"Leeds United"},{n:"Herman Johansson",p:"DF",caps:3,g:0,c:"FC Dallas"},{n:"Lucas Bergvall",p:"MF",caps:9,g:0,c:"Tottenham Hotspur"},{n:"Daniel Svensson",p:"DF",caps:12,g:0,c:"Borussia Dortmund"},{n:"Alexander Isak",p:"FW",caps:57,g:17,c:"Liverpool"},{n:"Benjamin Nygren",p:"FW",caps:10,g:3,c:"Celtic"},{n:"Anthony Elanga",p:"FW",caps:29,g:6,c:"Newcastle United"},{n:"Viktor Johansson",p:"GK",caps:12,g:0,c:"Stoke City"},{n:"Ken Sema",p:"FW",caps:33,g:5,c:"Pafos"},{n:"Hjalmar Ekdal",p:"DF",caps:12,g:0,c:"Burnley"},{n:"Carl Starfelt",p:"DF",caps:17,g:0,c:"Celta Vigo"},{n:"Jesper Karlström",p:"MF",caps:24,g:0,c:"Udinese"},{n:"Viktor Gyökeres",p:"FW",caps:32,g:19,c:"Arsenal"},{n:"Yasin Ayari",p:"MF",caps:20,g:3,c:"Brighton & Hove Albion"},{n:"Mattias Svanberg",p:"MF",caps:40,g:2,c:"VfL Wolfsburg"},{n:"Eric Smith",p:"DF",caps:1,g:0,c:"FC St. Pauli"},{n:"Alexander Bernhardsson",p:"FW",caps:10,g:0,c:"Holstein Kiel"},{n:"Besfort Zeneli",p:"MF",caps:7,g:0,c:"Union Saint-Gilloise"},{n:"Kristoffer Nordfeldt",p:"GK",caps:20,g:0,c:"AIK"},{n:"Elliot Stroud",p:"DF",caps:0,g:0,c:"Mjällby AIF"},{n:"Gustaf Nilsson",p:"FW",caps:9,g:3,c:"Club Brugge"},{n:"Taha Ali",p:"FW",caps:1,g:0,c:"Malmö FF"}],
+  ALG:[{n:"Luca Zidane",p:"GK",caps:6,g:0,c:"Granada"},{n:"Oussama Benbot",p:"GK",caps:2,g:0,c:"USM Alger"},{n:"Melvin Mastil",p:"GK",caps:1,g:0,c:"Stade Nyonnais"},{n:"Aïssa Mandi",p:"DF",caps:116,g:7,c:"Lille"},{n:"Ramy Bensebaini",p:"DF",caps:81,g:7,c:"Borussia Dortmund"},{n:"Mohamed Amine Tougai",p:"DF",caps:28,g:2,c:"Espérance de Tunis"},{n:"Rayan Aït-Nouri",p:"DF",caps:27,g:0,c:"Manchester City"},{n:"Jaouen Hadjam",p:"DF",caps:16,g:3,c:"Young Boys"},{n:"Rafik Belghali",p:"DF",caps:11,g:1,c:"Hellas Verona"},{n:"Zineddine Belaïd",p:"DF",caps:9,g:1,c:"JS Kabylie"},{n:"Achref Abada",p:"DF",caps:6,g:1,c:"USM Alger"},{n:"Samir Chergui",p:"DF",caps:4,g:0,c:"Paris FC"},{n:"Nabil Bentaleb",p:"MF",caps:58,g:6,c:"Lille"},{n:"Ramiz Zerrouki",p:"MF",caps:51,g:3,c:"Twente"},{n:"Hicham Boudaoui",p:"MF",caps:32,g:0,c:"Nice"},{n:"Farès Chaïbi",p:"MF",caps:28,g:3,c:"Eintracht Frankfurt"},{n:"Houssem Aouar",p:"MF",caps:19,g:6,c:"Al-Ittihad"},{n:"Ibrahim Maza",p:"MF",caps:15,g:2,c:"Bayer Leverkusen"},{n:"Yacine Titraoui",p:"MF",caps:5,g:0,c:"Charleroi"},{n:"Riyad Mahrez",p:"FW",caps:113,g:38,c:"Al-Ahli",cap:1},{n:"Mohamed Amoura",p:"FW",caps:44,g:19,c:"VfL Wolfsburg"},{n:"Amine Gouiri",p:"FW",caps:21,g:8,c:"Marseille"},{n:"Anis Hadj Moussa",p:"FW",caps:13,g:0,c:"Feyenoord"},{n:"Adil Boulbina",p:"FW",caps:10,g:6,c:"Al-Duhail"},{n:"Nadhir Benbouali",p:"FW",caps:2,g:1,c:"Győri ETO"},{n:"Farès Ghedjemis",p:"FW",caps:1,g:1,c:"Frosinone"}],
+  TUN:[{n:"Aymen Dahmen",p:"GK",caps:37,g:0,c:"CS Sfaxien"},{n:"Sabri Ben Hessen",p:"GK",caps:2,g:0,c:"Étoile du Sahel"},{n:"Mouhib Chamakh",p:"GK",caps:1,g:0,c:"Club Africain"},{n:"Montassar Talbi",p:"DF",caps:62,g:4,c:"Lorient"},{n:"Dylan Bronn",p:"DF",caps:52,g:2,c:"Servette"},{n:"Ali Abdi",p:"DF",caps:45,g:7,c:"Nice"},{n:"Yan Valery",p:"DF",caps:21,g:0,c:"Young Boys"},{n:"Mohamed Amine Ben Hamida",p:"DF",caps:12,g:0,c:"Espérance de Tunis"},{n:"Moutaz Neffati",p:"DF",caps:5,g:0,c:"IFK Norrköping"},{n:"Omar Rekik",p:"DF",caps:4,g:0,c:"Maribor"},{n:"Adem Arous",p:"DF",caps:1,g:0,c:"Kasımpaşa"},{n:"Raed Chikhaoui",p:"DF",caps:0,g:0,c:"US Monastir"},{n:"Ellyes Skhiri",p:"MF",caps:81,g:4,c:"Eintracht Frankfurt",cap:1},{n:"Hannibal Mejbri",p:"MF",caps:44,g:1,c:"Burnley"},{n:"Anis Ben Slimane",p:"MF",caps:39,g:4,c:"Norwich City"},{n:"Mortadha Ben Ouanes",p:"MF",caps:17,g:0,c:"Kasımpaşa"},{n:"Ismaël Gharbi",p:"MF",caps:15,g:2,c:"FC Augsburg"},{n:"Hadj Mahmoud",p:"MF",caps:7,g:0,c:"Lugano"},{n:"Rani Khedira",p:"MF",caps:2,g:0,c:"Union Berlin"},{n:"Elias Achouri",p:"FW",caps:29,g:4,c:"Copenhagen"},{n:"Firas Chaouat",p:"FW",caps:28,g:6,c:"Club Africain"},{n:"Hazem Mastouri",p:"FW",caps:18,g:4,c:"Dynamo Makhachkala"},{n:"Elias Saad",p:"FW",caps:14,g:4,c:"Hannover 96"},{n:"Sebastian Tounekti",p:"FW",caps:10,g:1,c:"Celtic"},{n:"Khalil Ayari",p:"FW",caps:2,g:0,c:"Paris Saint-Germain"},{n:"Rayan Elloumi",p:"FW",caps:2,g:0,c:"Vancouver Whitecaps FC"}],
+  CZE:[{n:"Matěj Kovář",p:"GK",caps:19,g:0,c:"PSV Eindhoven"},{n:"Jindřich Staněk",p:"GK",caps:14,g:0,c:"Slavia Prague"},{n:"Lukáš Horníček",p:"GK",caps:1,g:0,c:"Braga"},{n:"Vladimír Coufal",p:"DF",caps:61,g:2,c:"TSG Hoffenheim"},{n:"Tomáš Holeš",p:"DF",caps:40,g:2,c:"Slavia Prague"},{n:"Ladislav Krejčí",p:"DF",caps:26,g:5,c:"Wolverhampton Wanderers",cap:1},{n:"David Zima",p:"DF",caps:24,g:1,c:"Slavia Prague"},{n:"Jaroslav Zelený",p:"DF",caps:22,g:0,c:"Sparta Prague"},{n:"David Jurásek",p:"DF",caps:17,g:1,c:"Slavia Prague"},{n:"David Douděra",p:"DF",caps:16,g:2,c:"Slavia Prague"},{n:"Robin Hranáč",p:"DF",caps:13,g:1,c:"TSG Hoffenheim"},{n:"Štěpán Chaloupek",p:"DF",caps:4,g:0,c:"Slavia Prague"},{n:"Tomáš Souček",p:"MF",caps:89,g:17,c:"West Ham United"},{n:"Vladimír Darida",p:"MF",caps:78,g:8,c:"Hradec Králové"},{n:"Lukáš Provod",p:"MF",caps:37,g:3,c:"Slavia Prague"},{n:"Michal Sadílek",p:"MF",caps:34,g:1,c:"Slavia Prague"},{n:"Pavel Šulc",p:"MF",caps:20,g:5,c:"Lyon"},{n:"Lukáš Červ",p:"MF",caps:16,g:2,c:"Viktoria Plzeň"},{n:"Hugo Sochůrek",p:"MF",caps:1,g:0,c:"Sparta Prague"},{n:"Alexandr Sojka",p:"MF",caps:1,g:0,c:"Viktoria Plzeň"},{n:"Denis Višinský",p:"MF",caps:1,g:0,c:"Viktoria Plzeň"},{n:"Patrik Schick",p:"FW",caps:52,g:25,c:"Bayer Leverkusen"},{n:"Adam Hložek",p:"FW",caps:42,g:5,c:"TSG Hoffenheim"},{n:"Jan Kuchta",p:"FW",caps:31,g:3,c:"Sparta Prague"},{n:"Mojmír Chytil",p:"FW",caps:22,g:6,c:"Slavia Prague"},{n:"Tomáš Chorý",p:"FW",caps:21,g:6,c:"Slavia Prague"}],
+  SCO:[{n:"Craig Gordon",p:"GK",caps:84,g:0,c:"Heart of Midlothian"},{n:"Angus Gunn",p:"GK",caps:21,g:0,c:"Nottingham Forest"},{n:"Liam Kelly",p:"GK",caps:3,g:0,c:"Rangers"},{n:"Andy Robertson",p:"DF",caps:93,g:4,c:"Liverpool",cap:1},{n:"Grant Hanley",p:"DF",caps:67,g:2,c:"Hibernian"},{n:"Kieran Tierney",p:"DF",caps:55,g:2,c:"Celtic"},{n:"Scott McKenna",p:"DF",caps:50,g:1,c:"Dinamo Zagreb"},{n:"Jack Hendry",p:"DF",caps:37,g:3,c:"Al-Ettifaq"},{n:"Nathan Patterson",p:"DF",caps:26,g:1,c:"Everton"},{n:"Anthony Ralston",p:"DF",caps:26,g:1,c:"Celtic"},{n:"John Souttar",p:"DF",caps:23,g:2,c:"Rangers"},{n:"Aaron Hickey",p:"DF",caps:20,g:0,c:"Brentford"},{n:"Dominic Hyam",p:"DF",caps:3,g:0,c:"Wrexham"},{n:"John McGinn",p:"MF",caps:85,g:20,c:"Aston Villa"},{n:"Scott McTominay",p:"MF",caps:69,g:14,c:"Napoli"},{n:"Ryan Christie",p:"MF",caps:67,g:10,c:"Bournemouth"},{n:"Kenny McLean",p:"MF",caps:57,g:3,c:"Norwich City"},{n:"Lewis Ferguson",p:"MF",caps:23,g:1,c:"Bologna"},{n:"Ben Gannon-Doak",p:"MF",caps:13,g:1,c:"Bournemouth"},{n:"Findlay Curtis",p:"MF",caps:2,g:1,c:"Kilmarnock"},{n:"Tyler Fletcher",p:"MF",caps:1,g:0,c:"Manchester United"},{n:"Lyndon Dykes",p:"FW",caps:51,g:10,c:"Charlton Athletic"},{n:"Ché Adams",p:"FW",caps:46,g:11,c:"Torino"},{n:"Lawrence Shankland",p:"FW",caps:19,g:6,c:"Heart of Midlothian"},{n:"George Hirst",p:"FW",caps:9,g:1,c:"Ipswich Town"},{n:"Ross Stewart",p:"FW",caps:2,g:0,c:"Southampton"}],
+  PAR:[{n:"Gatito Fernández",p:"GK",caps:30,g:0,c:"Cerro Porteño"},{n:"Orlando Gill",p:"GK",caps:5,g:0,c:"San Lorenzo"},{n:"Gastón Olveira",p:"GK",caps:1,g:0,c:"Olimpia"},{n:"Gustavo Gómez",p:"DF",caps:88,g:4,c:"Palmeiras",cap:1},{n:"Júnior Alonso",p:"DF",caps:70,g:3,c:"Atlético Mineiro"},{n:"Fabián Balbuena",p:"DF",caps:47,g:2,c:"Grêmio"},{n:"Omar Alderete",p:"DF",caps:35,g:3,c:"Sunderland"},{n:"Juan José Cáceres",p:"DF",caps:16,g:0,c:"Dynamo Moscow"},{n:"Gustavo Velázquez",p:"DF",caps:12,g:1,c:"Cerro Porteño"},{n:"José Canale",p:"DF",caps:1,g:0,c:"Lanús"},{n:"Alexandro Maidana",p:"DF",caps:1,g:0,c:"Talleres"},{n:"Miguel Almirón",p:"MF",caps:75,g:9,c:"Atlanta United FC"},{n:"Kaku",p:"MF",caps:32,g:5,c:"Al-Ain"},{n:"Andrés Cubas",p:"MF",caps:32,g:0,c:"Vancouver Whitecaps FC"},{n:"Ramón Sosa",p:"MF",caps:28,g:1,c:"Palmeiras"},{n:"Diego Gómez",p:"MF",caps:23,g:3,c:"Brighton & Hove Albion"},{n:"Damián Bobadilla",p:"MF",caps:19,g:1,c:"São Paulo"},{n:"Braian Ojeda",p:"MF",caps:16,g:0,c:"Orlando City SC"},{n:"Matías Galarza",p:"MF",caps:14,g:2,c:"Atlanta United FC"},{n:"Maurício",p:"MF",caps:2,g:0,c:"Palmeiras"},{n:"Antonio Sanabria",p:"FW",caps:47,g:7,c:"Cremonese"},{n:"Julio Enciso",p:"FW",caps:31,g:4,c:"Strasbourg"},{n:"Gabriel Ávalos",p:"FW",caps:22,g:2,c:"Independiente"},{n:"Álex Arce",p:"FW",caps:14,g:1,c:"Independiente Rivadavia"},{n:"Isidro Pitta",p:"FW",caps:5,g:0,c:"Red Bull Bragantino"},{n:"Gustavo Caballero",p:"FW",caps:2,g:1,c:"Portsmouth"}],
+  RSA:[{n:"Ronwen Williams",p:"GK",caps:62,g:0,c:"Mamelodi Sundowns",cap:1},{n:"Ricardo Goss",p:"GK",caps:4,g:0,c:"Siwelele"},{n:"Sipho Chaine",p:"GK",caps:3,g:0,c:"Orlando Pirates"},{n:"Aubrey Modiba",p:"DF",caps:44,g:3,c:"Mamelodi Sundowns"},{n:"Khuliso Mudau",p:"DF",caps:32,g:1,c:"Mamelodi Sundowns"},{n:"Nkosinathi Sibisi",p:"DF",caps:19,g:0,c:"Orlando Pirates"},{n:"Mbekezeli Mbokazi",p:"DF",caps:10,g:1,c:"Chicago Fire FC"},{n:"Ime Okon",p:"DF",caps:7,g:1,c:"Hannover 96"},{n:"Samukele Kabini",p:"DF",caps:5,g:0,c:"Molde"},{n:"Khulumani Ndamane",p:"DF",caps:5,g:0,c:"Mamelodi Sundowns"},{n:"Thabang Matuludi",p:"DF",caps:2,g:0,c:"Polokwane City"},{n:"Kamogelo Sebelebele",p:"DF",caps:2,g:0,c:"Orlando Pirates"},{n:"Bradley Cross",p:"DF",caps:0,g:0,c:"Kaizer Chiefs"},{n:"Olwethu Makhanya",p:"DF",caps:0,g:0,c:"Philadelphia Union"},{n:"Teboho Mokoena",p:"MF",caps:51,g:9,c:"Mamelodi Sundowns"},{n:"Sphephelo Sithole",p:"MF",caps:27,g:1,c:"Tondela"},{n:"Thalente Mbatha",p:"MF",caps:14,g:3,c:"Orlando Pirates"},{n:"Jayden Adams",p:"MF",caps:4,g:0,c:"Mamelodi Sundowns"},{n:"Themba Zwane",p:"FW",caps:53,g:12,c:"Mamelodi Sundowns"},{n:"Lyle Foster",p:"FW",caps:26,g:10,c:"Burnley"},{n:"Evidence Makgopa",p:"FW",caps:26,g:6,c:"Orlando Pirates"},{n:"Oswin Appollis",p:"FW",caps:25,g:8,c:"Orlando Pirates"},{n:"Iqraam Rayners",p:"FW",caps:13,g:4,c:"Mamelodi Sundowns"},{n:"Relebohile Mofokeng",p:"FW",caps:12,g:0,c:"Orlando Pirates"},{n:"Thapelo Maseko",p:"FW",caps:9,g:1,c:"AEL Limassol"},{n:"Tshepang Moremi",p:"FW",caps:9,g:1,c:"Orlando Pirates"}],
+  KSA:[{n:"Mohammed Al-Owais",p:"GK",caps:63,g:0,c:"Al-Ula"},{n:"Nawaf Al-Aqidi",p:"GK",caps:22,g:0,c:"Al-Nassr"},{n:"Ahmed Al-Kassar",p:"GK",caps:8,g:0,c:"Al-Qadsiah"},{n:"Saud Abdulhamid",p:"DF",caps:53,g:1,c:"Lens"},{n:"Hassan Al-Tambakti",p:"DF",caps:51,g:0,c:"Al-Hilal"},{n:"Abdulelah Al-Amri",p:"DF",caps:41,g:1,c:"Al-Nassr"},{n:"Nawaf Boushal",p:"DF",caps:24,g:0,c:"Al-Nassr"},{n:"Ali Lajami",p:"DF",caps:20,g:1,c:"Al-Hilal"},{n:"Ali Majrashi",p:"DF",caps:20,g:0,c:"Al-Ahli"},{n:"Hassan Kadesh",p:"DF",caps:19,g:2,c:"Al-Ittihad"},{n:"Moteb Al-Harbi",p:"DF",caps:11,g:0,c:"Al-Hilal"},{n:"Jehad Thakri",p:"DF",caps:6,g:0,c:"Al-Qadsiah"},{n:"Mohammed Abu Al-Shamat",p:"DF",caps:5,g:0,c:"Al-Qadsiah"},{n:"Salem Al-Dawsari",p:"MF",caps:108,g:26,c:"Al-Hilal",cap:1},{n:"Mohamed Kanno",p:"MF",caps:75,g:8,c:"Al-Hilal"},{n:"Nasser Al-Dawsari",p:"MF",caps:42,g:0,c:"Al-Hilal"},{n:"Abdullah Al-Khaibari",p:"MF",caps:38,g:0,c:"Al-Nassr"},{n:"Musab Al-Juwayr",p:"MF",caps:33,g:6,c:"Al-Qadsiah"},{n:"Ayman Yahya",p:"MF",caps:25,g:0,c:"Al-Nassr"},{n:"Ziyad Al-Johani",p:"MF",caps:11,g:0,c:"Al-Ahli"},{n:"Sultan Mandash",p:"MF",caps:5,g:1,c:"Al-Hilal"},{n:"Alaa Al-Hejji",p:"MF",caps:1,g:0,c:"Neom"},{n:"Firas Al-Buraikan",p:"FW",caps:69,g:15,c:"Al-Ahli"},{n:"Saleh Al-Shehri",p:"FW",caps:55,g:18,c:"Al-Ittihad"},{n:"Abdullah Al-Hamdan",p:"FW",caps:48,g:11,c:"Al-Nassr"},{n:"Khalid Al-Ghannam",p:"FW",caps:5,g:0,c:"Al-Ettifaq"}],
+  IRN:[{n:"Alireza Beiranvand",p:"GK",caps:85,g:0,c:"Tractor"},{n:"Payam Niazmand",p:"GK",caps:15,g:0,c:"Persepolis"},{n:"Hossein Hosseini",p:"GK",caps:13,g:0,c:"Sepahan"},{n:"Ehsan Hajsafi",p:"DF",caps:145,g:7,c:"Sepahan",cap:1},{n:"Milad Mohammadi",p:"DF",caps:75,g:1,c:"Persepolis"},{n:"Ramin Rezaeian",p:"DF",caps:73,g:7,c:"Foolad"},{n:"Hossein Kanaanizadegan",p:"DF",caps:64,g:6,c:"Persepolis"},{n:"Shojae Khalilzadeh",p:"DF",caps:57,g:2,c:"Tractor"},{n:"Saleh Hardani",p:"DF",caps:17,g:1,c:"Esteghlal"},{n:"Ali Nemati",p:"DF",caps:16,g:0,c:"Foolad"},{n:"Danial Eiri",p:"DF",caps:0,g:0,c:"Malavan"},{n:"Alireza Jahanbakhsh",p:"MF",caps:98,g:17,c:"Dender"},{n:"Saeid Ezatolahi",p:"MF",caps:82,g:1,c:"Shabab Al-Ahli"},{n:"Saman Ghoddos",p:"MF",caps:67,g:3,c:"Kalba"},{n:"Mehdi Torabi",p:"MF",caps:52,g:7,c:"Tractor"},{n:"Rouzbeh Cheshmi",p:"MF",caps:40,g:3,c:"Esteghlal"},{n:"Mohammad Mohebi",p:"MF",caps:36,g:14,c:"Rostov"},{n:"Mehdi Ghayedi",p:"MF",caps:29,g:10,c:"Al-Nasr"},{n:"Mohammad Ghorbani",p:"MF",caps:15,g:0,c:"Al-Wahda"},{n:"Aria Yousefi",p:"MF",caps:13,g:1,c:"Sepahan"},{n:"Amirmohammad Razzaghinia",p:"MF",caps:3,g:0,c:"Esteghlal"},{n:"Mehdi Taremi",p:"FW",caps:104,g:60,c:"Olympiacos"},{n:"Shahriyar Moghanlou",p:"FW",caps:20,g:2,c:"Kalba"},{n:"Amirhossein Hosseinzadeh",p:"FW",caps:17,g:5,c:"Tractor"},{n:"Ali Alipour",p:"FW",caps:13,g:1,c:"Persepolis"},{n:"Dennis Eckert",p:"FW",caps:0,g:0,c:"Standard Liège"}],
+  IRQ:[{n:"Jalal Hassan",p:"GK",caps:100,g:0,c:"Al-Zawraa",cap:1},{n:"Fahad Talib",p:"GK",caps:21,g:0,c:"Al-Talaba"},{n:"Ahmed Basil",p:"GK",caps:14,g:0,c:"Al-Shorta"},{n:"Rebin Sulaka",p:"DF",caps:54,g:1,c:"Port"},{n:"Manaf Younis",p:"DF",caps:32,g:1,c:"Al-Shorta"},{n:"Merchas Doski",p:"DF",caps:30,g:0,c:"Viktoria Plzeň"},{n:"Zaid Tahseen",p:"DF",caps:26,g:1,c:"Pakhtakor"},{n:"Frans Putros",p:"DF",caps:26,g:0,c:"Persib"},{n:"Hussein Ali",p:"DF",caps:25,g:1,c:"Pogoń Szczecin"},{n:"Ahmed Yahya",p:"DF",caps:19,g:0,c:"Al-Shorta"},{n:"Mustafa Saadoon",p:"DF",caps:15,g:0,c:"Al-Shorta"},{n:"Akam Hashim",p:"DF",caps:12,g:1,c:"Al-Zawraa"},{n:"Ibrahim Bayesh",p:"MF",caps:74,g:8,c:"Al-Dhafra"},{n:"Amir Al-Ammari",p:"MF",caps:49,g:3,c:"Cracovia"},{n:"Ali Jasim",p:"MF",caps:35,g:2,c:"Al-Najma"},{n:"Youssef Amyn",p:"MF",caps:25,g:2,c:"AEK Larnaca"},{n:"Zidane Iqbal",p:"MF",caps:23,g:2,c:"Utrecht"},{n:"Marko Farji",p:"MF",caps:10,g:0,c:"Venezia"},{n:"Kevin Yakob",p:"MF",caps:7,g:0,c:"AGF"},{n:"Aimar Sher",p:"MF",caps:6,g:0,c:"Sarpsborg 08"},{n:"Zaid Ismail",p:"MF",caps:5,g:0,c:"Al-Talaba"},{n:"Ahmed Qasem",p:"MF",caps:1,g:0,c:"Nashville SC"},{n:"Aymen Hussein",p:"FW",caps:93,g:33,c:"Al-Karma"},{n:"Mohanad Ali",p:"FW",caps:71,g:27,c:"Dibba"},{n:"Ali Al-Hamadi",p:"FW",caps:18,g:5,c:"Luton Town"},{n:"Ali Yousif",p:"FW",caps:6,g:1,c:"Al-Talaba"}],
+  JOR:[{n:"Yazeed Abulaila",p:"GK",caps:75,g:0,c:"Al-Hussein"},{n:"Abdallah Al-Fakhouri",p:"GK",caps:11,g:0,c:"Al-Wehdat"},{n:"Nour Bani Attiah",p:"GK",caps:4,g:0,c:"Al-Faisaly"},{n:"Ihsan Haddad",p:"DF",caps:91,g:2,c:"Al-Hussein",cap:1},{n:"Yazan Al-Arab",p:"DF",caps:79,g:3,c:"FC Seoul"},{n:"Abdallah Nasib",p:"DF",caps:64,g:3,c:"Al-Zawraa"},{n:"Saed Al-Rosan",p:"DF",caps:20,g:2,c:"Al-Hussein"},{n:"Husam Abu Dahab",p:"DF",caps:17,g:0,c:"Al-Faisaly"},{n:"Mo Abualnadi",p:"DF",caps:17,g:0,c:"Selangor"},{n:"Salim Obaid",p:"DF",caps:10,g:0,c:"Al-Hussein"},{n:"Anas Badawi",p:"DF",caps:1,g:0,c:"Al-Faisaly"},{n:"Rajaei Ayed",p:"MF",caps:72,g:0,c:"Al-Hussein"},{n:"Noor Al-Rawabdeh",p:"MF",caps:67,g:3,c:"Selangor"},{n:"Ibrahim Sadeh",p:"MF",caps:56,g:3,c:"Al-Karma"},{n:"Mohammad Abu Hashish",p:"MF",caps:55,g:1,c:"Al-Karma"},{n:"Nizar Al-Rashdan",p:"MF",caps:46,g:4,c:"Qatar SC"},{n:"Mohannad Abu Taha",p:"MF",caps:28,g:1,c:"Al-Quwa Al-Jawiya"},{n:"Amer Jamous",p:"MF",caps:18,g:1,c:"Al-Zawraa"},{n:"Mohammad Al-Dawoud",p:"MF",caps:12,g:1,c:"Al-Wehdat"},{n:"Yousef Qashi",p:"MF",caps:1,g:0,c:"Al-Hussein"},{n:"Mohammad Taha",p:"MF",caps:0,g:0,c:"Al-Hussein"},{n:"Musa Al-Taamari",p:"FW",caps:91,g:24,c:"Rennes"},{n:"Mahmoud Al-Mardi",p:"FW",caps:88,g:9,c:"Al-Hussein"},{n:"Ali Olwan",p:"FW",caps:65,g:29,c:"Al-Sailiya"},{n:"Mohammad Abu Zrayq",p:"FW",caps:40,g:5,c:"Raja Casablanca"},{n:"Odeh Al-Fakhouri",p:"FW",caps:9,g:1,c:"Pyramids"},{n:"Ibrahim Sabra",p:"FW",caps:9,g:1,c:"Lokomotiva Zagreb"},{n:"Ali Azaizeh",p:"FW",caps:3,g:0,c:"Al-Shabab"}],
+  UZB:[{n:"Utkir Yusupov",p:"GK",caps:39,g:0,c:"Navbahor"},{n:"Abduvohid Nematov",p:"GK",caps:7,g:0,c:"Nasaf"},{n:"Botirali Ergashev",p:"GK",caps:2,g:0,c:"Neftchi"},{n:"Rustam Ashurmatov",p:"DF",caps:47,g:1,c:"Esteghlal"},{n:"Farrukh Sayfiev",p:"DF",caps:44,g:1,c:"Neftchi"},{n:"Khojiakbar Alijonov",p:"DF",caps:40,g:2,c:"Pakhtakor"},{n:"Sherzod Nasrullaev",p:"DF",caps:29,g:2,c:"Nasaf"},{n:"Umar Eshmurodov",p:"DF",caps:29,g:0,c:"Nasaf"},{n:"Abdukodir Khusanov",p:"DF",caps:25,g:0,c:"Manchester City"},{n:"Abdulla Abdullaev",p:"DF",caps:16,g:0,c:"Dibba"},{n:"Bekhruz Karimov",p:"DF",caps:2,g:0,c:"Surkhon"},{n:"Jakhongir Urozov",p:"DF",caps:2,g:0,c:"Dinamo Samarqand"},{n:"Avazbek Ulmasaliev",p:"DF",caps:0,g:0,c:"AGMK"},{n:"Otabek Shukurov",p:"MF",caps:82,g:9,c:"Baniyas"},{n:"Odiljon Hamrobekov",p:"MF",caps:71,g:1,c:"Tractor"},{n:"Jamshid Iskanderov",p:"MF",caps:37,g:4,c:"Neftchi"},{n:"Akmal Mozgovoy",p:"MF",caps:23,g:1,c:"Pakhtakor"},{n:"Azizjon Ganiev",p:"MF",caps:18,g:0,c:"Al-Bataeh"},{n:"Jasurbek Jaloliddinov",p:"MF",caps:1,g:0,c:"Sogdiana"},{n:"Umarali Rakhmonaliev",p:"MF",caps:1,g:0,c:"Sabah"},{n:"Sherzod Esanov",p:"MF",caps:0,g:0,c:"Bukhara"},{n:"Eldor Shomurodov",p:"FW",caps:90,g:44,c:"İstanbul Başakşehir",cap:1},{n:"Igor Sergeev",p:"FW",caps:81,g:24,c:"Persepolis"},{n:"Jaloliddin Masharipov",p:"FW",caps:74,g:12,c:"Esteghlal"},{n:"Oston Urunov",p:"FW",caps:40,g:10,c:"Persepolis"},{n:"Abbosbek Fayzullaev",p:"FW",caps:30,g:8,c:"İstanbul Başakşehir"}],
+  COD:[{n:"Lionel Mpasi",p:"GK",caps:27,g:0,c:"Le Havre"},{n:"Timothy Fayulu",p:"GK",caps:3,g:0,c:"Noah"},{n:"Matthieu Epolo",p:"GK",caps:1,g:0,c:"Standard Liège"},{n:"Chancel Mbemba",p:"DF",caps:107,g:7,c:"Lille",cap:1},{n:"Arthur Masuaku",p:"DF",caps:44,g:4,c:"Lens"},{n:"Gédéon Kalulu",p:"DF",caps:27,g:0,c:"Aris Limassol"},{n:"Joris Kayembe",p:"DF",caps:24,g:0,c:"Genk"},{n:"Dylan Batubinsika",p:"DF",caps:14,g:1,c:"AEL"},{n:"Axel Tuanzebe",p:"DF",caps:12,g:1,c:"Burnley"},{n:"Aaron Wan-Bissaka",p:"DF",caps:10,g:0,c:"West Ham United"},{n:"Steve Kapuadi",p:"DF",caps:3,g:0,c:"Widzew Łódź"},{n:"Samuel Moutoussamy",p:"MF",caps:56,g:0,c:"Atromitos"},{n:"Edo Kayembe",p:"MF",caps:41,g:2,c:"Watford"},{n:"Charles Pickel",p:"MF",caps:33,g:1,c:"Espanyol"},{n:"Gaël Kakuta",p:"MF",caps:30,g:5,c:"AEL"},{n:"Noah Sadiki",p:"MF",caps:18,g:0,c:"Sunderland"},{n:"Aaron Tshibola",p:"MF",caps:16,g:1,c:"Kilmarnock"},{n:"Ngal'ayel Mukau",p:"MF",caps:12,g:0,c:"Lille"},{n:"Brian Cipenga",p:"MF",caps:7,g:0,c:"Castellón"},{n:"Cédric Bakambu",p:"FW",caps:68,g:21,c:"Real Betis"},{n:"Meschak Elia",p:"FW",caps:68,g:12,c:"Alanyaspor"},{n:"Théo Bongonda",p:"FW",caps:37,g:7,c:"Spartak Moscow"},{n:"Fiston Mayele",p:"FW",caps:37,g:6,c:"Pyramids"},{n:"Yoane Wissa",p:"FW",caps:36,g:9,c:"Newcastle United"},{n:"Nathanaël Mbuku",p:"FW",caps:17,g:2,c:"Montpellier"},{n:"Simon Banza",p:"FW",caps:14,g:2,c:"Al-Jazira"}],
+  GHA:[{n:"Lawrence Ati-Zigi",p:"GK",caps:28,g:0,c:"St. Gallen"},{n:"Benjamin Asare",p:"GK",caps:10,g:0,c:"Hearts of Oak"},{n:"Joseph Anang",p:"GK",caps:1,g:0,c:"St Patrick's Athletic"},{n:"Abdul Rahman Baba",p:"DF",caps:52,g:1,c:"PAOK"},{n:"Gideon Mensah",p:"DF",caps:39,g:0,c:"Auxerre"},{n:"Alidu Seidu",p:"DF",caps:23,g:1,c:"Rennes"},{n:"Jerome Opoku",p:"DF",caps:10,g:1,c:"İstanbul Başakşehir"},{n:"Jonas Adjetey",p:"DF",caps:9,g:0,c:"VfL Wolfsburg"},{n:"Abdul Mumin",p:"DF",caps:4,g:0,c:"Rayo Vallecano"},{n:"Kojo Peprah Oppong",p:"DF",caps:4,g:0,c:"Nice"},{n:"Derrick Luckassen",p:"DF",caps:1,g:0,c:"Pafos"},{n:"Marvin Senaya",p:"DF",caps:1,g:0,c:"Auxerre"},{n:"Thomas Partey",p:"MF",caps:56,g:15,c:"Villarreal"},{n:"Abdul Fatawu",p:"MF",caps:27,g:3,c:"Leicester City"},{n:"Elisha Owusu",p:"MF",caps:19,g:0,c:"Auxerre"},{n:"Caleb Yirenkyi",p:"MF",caps:10,g:0,c:"Nordsjælland"},{n:"Kwasi Sibo",p:"MF",caps:7,g:0,c:"Oviedo"},{n:"Augustine Boakye",p:"MF",caps:0,g:0,c:"Saint-Étienne"},{n:"Jordan Ayew",p:"FW",caps:117,g:33,c:"Leicester City",cap:1},{n:"Antoine Semenyo",p:"FW",caps:34,g:3,c:"Manchester City"},{n:"Kamaldeen Sulemana",p:"FW",caps:27,g:1,c:"Atalanta"},{n:"Iñaki Williams",p:"FW",caps:25,g:2,c:"Athletic Bilbao"},{n:"Ernest Nuamah",p:"FW",caps:18,g:4,c:"Lyon"},{n:"Christopher Bonsu Baah",p:"FW",caps:8,g:0,c:"Al-Qadsiah"},{n:"Brandon Thomas-Asante",p:"FW",caps:7,g:1,c:"Coventry City"},{n:"Prince Kwabena Adu",p:"FW",caps:4,g:0,c:"Viktoria Plzeň"}],
+  PAN:[{n:"Luis Mejía",p:"GK",caps:56,g:0,c:"Nacional"},{n:"Orlando Mosquera",p:"GK",caps:47,g:0,c:"Al-Fayha"},{n:"César Samudio",p:"GK",caps:4,g:0,c:"Marathón"},{n:"Eric Davis",p:"DF",caps:105,g:9,c:"Plaza Amador"},{n:"Fidel Escobar",p:"DF",caps:97,g:4,c:"Saprissa"},{n:"Michael Amir Murillo",p:"DF",caps:92,g:9,c:"Beşiktaş"},{n:"Roderick Miller",p:"DF",caps:49,g:2,c:"Turan Tovuz"},{n:"Andrés Andrade",p:"DF",caps:48,g:1,c:"LASK"},{n:"César Blackman",p:"DF",caps:38,g:3,c:"Slovan Bratislava"},{n:"José Córdoba",p:"DF",caps:31,g:1,c:"Norwich City"},{n:"Jiovany Ramos",p:"DF",caps:21,g:1,c:"Puerto Cabello"},{n:"Jorge Gutiérrez",p:"DF",caps:17,g:0,c:"Deportivo La Guaira"},{n:"Edgardo Fariña",p:"DF",caps:16,g:0,c:"Pari Nizhny Novgorod"},{n:"Aníbal Godoy",p:"MF",caps:159,g:4,c:"San Diego FC",cap:1},{n:"Alberto Quintero",p:"MF",caps:140,g:7,c:"Plaza Amador"},{n:"Yoel Bárcenas",p:"MF",caps:102,g:10,c:"Mazatlán"},{n:"Adalberto Carrasquilla",p:"MF",caps:73,g:3,c:"UNAM"},{n:"José Luis Rodríguez",p:"MF",caps:68,g:8,c:"Juárez"},{n:"Cristian Martínez",p:"MF",caps:64,g:2,c:"Ironi Kiryat Shmona"},{n:"César Yanis",p:"MF",caps:55,g:5,c:"Cobresal"},{n:"Carlos Harvey",p:"MF",caps:26,g:3,c:"Minnesota United FC"},{n:"Azarias Londoño",p:"MF",caps:10,g:0,c:"Universidad Católica"},{n:"José Fajardo",p:"FW",caps:66,g:17,c:"Universidad Católica"},{n:"Ismael Díaz",p:"FW",caps:55,g:17,c:"León"},{n:"Cecilio Waterman",p:"FW",caps:53,g:14,c:"Universidad de Concepción"},{n:"Tomás Rodríguez",p:"FW",caps:12,g:3,c:"Saprissa"}],
+  HAI:[{n:"Johny Placide",p:"GK",caps:79,g:0,c:"Bastia",cap:1},{n:"Alexandre Pierre",p:"GK",caps:14,g:0,c:"Sochaux"},{n:"Josué Duverger",p:"GK",caps:6,g:0,c:"Cosmos Koblenz"},{n:"Ricardo Adé",p:"DF",caps:57,g:2,c:"LDU Quito"},{n:"Carlens Arcus",p:"DF",caps:51,g:1,c:"Angers"},{n:"Martin Expérience",p:"DF",caps:19,g:0,c:"Nancy"},{n:"Jean-Kévin Duverne",p:"DF",caps:15,g:1,c:"Gent"},{n:"Duke Lacroix",p:"DF",caps:14,g:2,c:"Colorado Springs Switchbacks FC"},{n:"Wilguens Paugain",p:"DF",caps:6,g:0,c:"Zulte Waregem"},{n:"Hannes Delcroix",p:"DF",caps:5,g:0,c:"Lugano"},{n:"Keeto Thermoncy",p:"DF",caps:1,g:0,c:"Young Boys"},{n:"Leverton Pierre",p:"MF",caps:33,g:0,c:"Vizela"},{n:"Danley Jean Jacques",p:"MF",caps:28,g:6,c:"Philadelphia Union"},{n:"Carl Sainté",p:"MF",caps:25,g:0,c:"El Paso Locomotive FC"},{n:"Jean-Ricner Bellegarde",p:"MF",caps:8,g:0,c:"Wolverhampton Wanderers"},{n:"Woodensky Pierre",p:"MF",caps:1,g:0,c:"Violette"},{n:"Dominique Simon",p:"MF",caps:0,g:0,c:"Tatran Prešov"},{n:"Duckens Nazon",p:"FW",caps:76,g:44,c:"Esteghlal"},{n:"Frantzdy Pierrot",p:"FW",caps:49,g:33,c:"Çaykur Rizespor"},{n:"Derrick Etienne Jr.",p:"FW",caps:46,g:8,c:"Toronto FC"},{n:"Louicius Deedson",p:"FW",caps:30,g:10,c:"FC Dallas"},{n:"Ruben Providence",p:"FW",caps:13,g:2,c:"Almere City"},{n:"Josué Casimir",p:"FW",caps:5,g:0,c:"Auxerre"},{n:"Yassin Fortuné",p:"FW",caps:3,g:0,c:"Vizela"},{n:"Wilson Isidor",p:"FW",caps:2,g:1,c:"Sunderland"},{n:"Lenny Joseph",p:"FW",caps:0,g:0,c:"Ferencváros"}],
+  CPV:[{n:"Vozinha",p:"GK",caps:85,g:0,c:"Chaves"},{n:"Márcio Rosa",p:"GK",caps:10,g:0,c:"Montana"},{n:"CJ dos Santos",p:"GK",caps:0,g:0,c:"San Diego FC"},{n:"Stopira",p:"DF",caps:60,g:4,c:"Torreense"},{n:"Roberto Lopes",p:"DF",caps:44,g:0,c:"Shamrock Rovers"},{n:"João Paulo",p:"DF",caps:40,g:1,c:"FCSB"},{n:"Diney",p:"DF",caps:29,g:2,c:"Al-Bataeh"},{n:"Logan Costa",p:"DF",caps:26,g:0,c:"Villarreal"},{n:"Steven Moreira",p:"DF",caps:18,g:0,c:"Columbus Crew"},{n:"Wagner Pina",p:"DF",caps:12,g:0,c:"Trabzonspor"},{n:"Sidny Lopes Cabral",p:"DF",caps:8,g:3,c:"Benfica"},{n:"Kelvin Pires",p:"DF",caps:4,g:1,c:"SJK"},{n:"Jamiro Monteiro",p:"MF",caps:53,g:5,c:"PEC Zwolle"},{n:"Kevin Pina",p:"MF",caps:30,g:2,c:"Krasnodar"},{n:"Deroy Duarte",p:"MF",caps:30,g:0,c:"Ludogorets Razgrad"},{n:"Telmo Arcanjo",p:"MF",caps:14,g:1,c:"Vitória de Guimarães"},{n:"Laros Duarte",p:"MF",caps:12,g:0,c:"Puskás Akadémia"},{n:"Yannick Semedo",p:"MF",caps:10,g:1,c:"Farense"},{n:"Ryan Mendes",p:"FW",caps:94,g:22,c:"Iğdır",cap:1},{n:"Garry Rodrigues",p:"FW",caps:59,g:9,c:"Apollon Limassol"},{n:"Willy Semedo",p:"FW",caps:36,g:2,c:"Omonia"},{n:"Jovane Cabral",p:"FW",caps:25,g:2,c:"Estrela Amadora"},{n:"Gilson Benchimol",p:"FW",caps:21,g:5,c:"Akron Tolyatti"},{n:"Dailon Livramento",p:"FW",caps:20,g:7,c:"Casa Pia"},{n:"Hélio Varela",p:"FW",caps:19,g:0,c:"Maccabi Tel Aviv"},{n:"Nuno da Costa",p:"FW",caps:7,g:1,c:"İstanbul Başakşehir"}],
+  NZL:[{n:"Max Crocombe",p:"GK",caps:22,g:0,c:"Millwall"},{n:"Tim Payne",p:"DF",caps:49,g:3,c:"Wellington Phoenix"},{n:"Francis de Vries",p:"DF",caps:18,g:1,c:"Auckland FC"},{n:"Tyler Bindon",p:"DF",caps:23,g:3,c:"Sheffield United"},{n:"Michael Boxall",p:"DF",caps:61,g:1,c:"Minnesota United FC"},{n:"Joe Bell",p:"MF",caps:31,g:1,c:"Viking"},{n:"Matthew Garbett",p:"MF",caps:35,g:5,c:"Peterborough United"},{n:"Marko Stamenić",p:"MF",caps:37,g:3,c:"Swansea City"},{n:"Chris Wood",p:"FW",caps:88,g:45,c:"Nottingham Forest",cap:1},{n:"Sarpreet Singh",p:"MF",caps:26,g:3,c:"Wellington Phoenix"},{n:"Elijah Just",p:"MF",caps:42,g:9,c:"Motherwell"},{n:"Alex Paulsen",p:"GK",caps:6,g:0,c:"Lechia Gdańsk"},{n:"Liberato Cacace",p:"DF",caps:35,g:1,c:"Wrexham"},{n:"Alex Rufer",p:"MF",caps:24,g:0,c:"Wellington Phoenix"},{n:"Nando Pijnaker",p:"DF",caps:23,g:0,c:"Auckland FC"},{n:"Finn Surman",p:"DF",caps:17,g:2,c:"Portland Timbers"},{n:"Kosta Barbarouses",p:"FW",caps:74,g:10,c:"Western Sydney Wanderers"},{n:"Ben Waine",p:"FW",caps:30,g:9,c:"Port Vale"},{n:"Ben Old",p:"MF",caps:22,g:2,c:"Saint-Étienne"},{n:"Callum McCowatt",p:"MF",caps:30,g:4,c:"Silkeborg"},{n:"Jesse Randall",p:"FW",caps:9,g:2,c:"Auckland FC"},{n:"Michael Woud",p:"GK",caps:6,g:0,c:"Auckland FC"},{n:"Ryan Thomas",p:"MF",caps:25,g:3,c:"PEC Zwolle"},{n:"Callan Elliot",p:"DF",caps:9,g:0,c:"Auckland FC"},{n:"Lachlan Bayliss",p:"MF",caps:2,g:0,c:"Newcastle Jets"},{n:"Tommy Smith",p:"DF",caps:56,g:2,c:"Braintree Town"}],
+  BIH:[{n:"Nikola Vasilj",p:"GK",caps:25,g:0,c:"FC St. Pauli"},{n:"Martin Zlomislić",p:"GK",caps:3,g:0,c:"Rijeka"},{n:"Osman Hadžikić",p:"GK",caps:0,g:0,c:"Slaven Belupo"},{n:"Sead Kolašinac",p:"DF",caps:64,g:0,c:"Atalanta"},{n:"Dennis Hadžikadunić",p:"DF",caps:31,g:0,c:"Sampdoria"},{n:"Amar Dedić",p:"DF",caps:27,g:1,c:"Benfica"},{n:"Nikola Katić",p:"DF",caps:16,g:1,c:"Schalke 04"},{n:"Tarik Muharemović",p:"DF",caps:13,g:1,c:"Sassuolo"},{n:"Nihad Mujakić",p:"DF",caps:11,g:1,c:"Gaziantep"},{n:"Stjepan Radeljić",p:"DF",caps:5,g:0,c:"Rijeka"},{n:"Nidal Čelik",p:"DF",caps:1,g:0,c:"Lens"},{n:"Amir Hadžiahmetović",p:"MF",caps:35,g:0,c:"Hull City"},{n:"Benjamin Tahirović",p:"MF",caps:27,g:2,c:"Brøndby"},{n:"Armin Gigović",p:"MF",caps:19,g:1,c:"Young Boys"},{n:"Dženis Burnić",p:"MF",caps:19,g:0,c:"Karlsruher SC"},{n:"Ivan Bašić",p:"MF",caps:16,g:0,c:"Astana"},{n:"Esmir Bajraktarević",p:"MF",caps:15,g:1,c:"PSV Eindhoven"},{n:"Amar Memić",p:"MF",caps:12,g:1,c:"Viktoria Plzeň"},{n:"Ivan Šunjić",p:"MF",caps:11,g:0,c:"Pafos"},{n:"Kerim Alajbegović",p:"MF",caps:9,g:1,c:"Red Bull Salzburg"},{n:"Ermin Mahmić",p:"MF",caps:1,g:0,c:"Slovan Liberec"},{n:"Edin Džeko",p:"FW",caps:148,g:73,c:"Schalke 04",cap:1},{n:"Ermedin Demirović",p:"FW",caps:39,g:4,c:"VfB Stuttgart"},{n:"Samed Baždar",p:"FW",caps:12,g:1,c:"Jagiellonia Białystok"},{n:"Haris Tabaković",p:"FW",caps:10,g:4,c:"Borussia Mönchengladbach"},{n:"Jovo Lukić",p:"FW",caps:2,g:0,c:"Universitatea Cluj"}],
+  QAT:[{n:"Mahmud Abunada",p:"GK",caps:4,g:0,c:"Al-Rayyan"},{n:"Pedro Miguel",p:"DF",caps:98,g:3,c:"Al-Sadd"},{n:"Lucas Mendes",p:"DF",caps:25,g:1,c:"Al-Wakrah"},{n:"Issa Laye",p:"DF",caps:3,g:0,c:"Al-Arabi"},{n:"Jassem Gaber",p:"MF",caps:31,g:1,c:"Al-Rayyan"},{n:"Abdulaziz Hatem",p:"MF",caps:117,g:11,c:"Al-Rayyan"},{n:"Ahmed Alaaeldin",p:"FW",caps:67,g:9,c:"Al-Rayyan"},{n:"Edmilson Junior",p:"FW",caps:15,g:0,c:"Al-Duhail"},{n:"Mohammed Muntari",p:"FW",caps:67,g:16,c:"Al-Gharafa"},{n:"Hassan Al-Haydos",p:"FW",caps:185,g:41,c:"Al-Sadd",cap:1},{n:"Akram Afif",p:"FW",caps:124,g:39,c:"Al-Sadd"},{n:"Karim Boudiaf",p:"MF",caps:117,g:5,c:"Al-Duhail"},{n:"Ayoub Al-Oui",p:"DF",caps:5,g:0,c:"Al-Gharafa"},{n:"Homam Ahmed",p:"DF",caps:67,g:3,c:"Cultural Leonesa"},{n:"Yusuf Abdurisag",p:"FW",caps:38,g:3,c:"Al-Wakrah"},{n:"Boualem Khoukhi",p:"DF",caps:115,g:20,c:"Al-Sadd"},{n:"Ahmed Al-Ganehi",p:"FW",caps:13,g:1,c:"Al-Gharafa"},{n:"Sultan Al-Brake",p:"DF",caps:16,g:0,c:"Al-Duhail"},{n:"Almoez Ali",p:"FW",caps:115,g:55,c:"Al-Duhail"},{n:"Ahmed Fathy",p:"MF",caps:47,g:0,c:"Al-Arabi"},{n:"Salah Zakaria",p:"GK",caps:8,g:0,c:"Al-Duhail"},{n:"Meshaal Barsham",p:"GK",caps:52,g:0,c:"Al-Sadd"},{n:"Assim Madibo",p:"MF",caps:50,g:0,c:"Al-Wakrah"},{n:"Tahsin Jamshid",p:"FW",caps:2,g:0,c:"Al-Duhail"},{n:"Al-Hashmi Al-Hussain",p:"DF",caps:7,g:0,c:"Al-Arabi"},{n:"Mohamed Al-Mannai",p:"MF",caps:9,g:0,c:"Al-Shamal"}],
+  CUW:[{n:"Eloy Room",p:"GK",caps:71,g:0,c:"Miami FC"},{n:"Shurandy Sambo",p:"DF",caps:7,g:0,c:"Sparta Rotterdam"},{n:"Juriën Gaari",p:"DF",caps:59,g:1,c:"Abha"},{n:"Roshon van Eijma",p:"DF",caps:27,g:1,c:"RKC Waalwijk"},{n:"Sherel Floranus",p:"DF",caps:27,g:0,c:"PEC Zwolle"},{n:"Godfried Roemeratoe",p:"MF",caps:27,g:1,c:"RKC Waalwijk"},{n:"Juninho Bacuna",p:"MF",caps:48,g:14,c:"Volendam"},{n:"Livano Comenencia",p:"MF",caps:19,g:1,c:"Zürich"},{n:"Jürgen Locadia",p:"FW",caps:13,g:1,c:"Miami FC"},{n:"Leandro Bacuna",p:"MF",caps:71,g:16,c:"Iğdır",cap:1},{n:"Jeremy Antonisse",p:"FW",caps:26,g:3,c:"Kifisia"},{n:"Sontje Hansen",p:"FW",caps:5,g:1,c:"Middlesbrough"},{n:"Tyrese Noslin",p:"MF",caps:6,g:1,c:"Telstar"},{n:"Kenji Gorré",p:"FW",caps:37,g:6,c:"Maccabi Haifa"},{n:"Ar'jany Martha",p:"MF",caps:8,g:2,c:"Rotherham United"},{n:"Jearl Margaritha",p:"FW",caps:21,g:5,c:"Beveren"},{n:"Brandley Kuwas",p:"FW",caps:34,g:2,c:"Volendam"},{n:"Armando Obispo",p:"DF",caps:5,g:0,c:"PSV Eindhoven"},{n:"Gervane Kastaneer",p:"FW",caps:28,g:9,c:"Terengganu"},{n:"Joshua Brenet",p:"DF",caps:17,g:1,c:"Kayserispor"},{n:"Tahith Chong",p:"FW",caps:5,g:3,c:"Sheffield United"},{n:"Kevin Felida",p:"MF",caps:19,g:1,c:"Den Bosch"},{n:"Riechedly Bazoer",p:"DF",caps:4,g:0,c:"Konyaspor"},{n:"Deveron Fonville",p:"DF",caps:1,g:0,c:"NEC"},{n:"Tyrick Bodak",p:"GK",caps:4,g:0,c:"Telstar"},{n:"Trevor Doornbusch",p:"GK",caps:7,g:0,c:"VVV-Venlo"}],
+  TUR:[{n:"Uğurcan Çakır",p:"GK",caps:38,g:0,c:"Galatasaray"},{n:"Mert Günok",p:"GK",caps:37,g:0,c:"Fenerbahçe"},{n:"Altay Bayındır",p:"GK",caps:11,g:0,c:"Manchester United"},{n:"Merih Demiral",p:"DF",caps:61,g:6,c:"Al-Ahli"},{n:"Zeki Çelik",p:"DF",caps:59,g:3,c:"Roma"},{n:"Çağlar Söyüncü",p:"DF",caps:59,g:2,c:"Fenerbahçe"},{n:"Mert Müldür",p:"DF",caps:43,g:3,c:"Fenerbahçe"},{n:"Ferdi Kadıoğlu",p:"DF",caps:30,g:2,c:"Brighton & Hove Albion"},{n:"Ozan Kabak",p:"DF",caps:28,g:2,c:"TSG Hoffenheim"},{n:"Abdülkerim Bardakcı",p:"DF",caps:26,g:2,c:"Galatasaray"},{n:"Eren Elmalı",p:"DF",caps:21,g:0,c:"Galatasaray"},{n:"Hakan Çalhanoğlu",p:"MF",caps:104,g:22,c:"Inter Milan",cap:1},{n:"Kaan Ayhan",p:"MF",caps:72,g:5,c:"Galatasaray"},{n:"Orkun Kökçü",p:"MF",caps:48,g:3,c:"Beşiktaş"},{n:"İsmail Yüksek",p:"MF",caps:31,g:1,c:"Fenerbahçe"},{n:"Salih Özcan",p:"MF",caps:28,g:1,c:"Borussia Dortmund"},{n:"Kerem Aktürkoğlu",p:"FW",caps:51,g:15,c:"Fenerbahçe"},{n:"İrfan Can Kahveci",p:"FW",caps:45,g:6,c:"Kasımpaşa"},{n:"Barış Alper Yılmaz",p:"FW",caps:33,g:2,c:"Galatasaray"},{n:"Arda Güler",p:"FW",caps:28,g:6,c:"Real Madrid"},{n:"Kenan Yıldız",p:"FW",caps:28,g:5,c:"Juventus"},{n:"Yunus Akgün",p:"FW",caps:17,g:3,c:"Galatasaray"},{n:"Deniz Gül",p:"FW",caps:6,g:1,c:"Porto"},{n:"Can Uzun",p:"FW",caps:4,g:0,c:"Eintracht Frankfurt"}]
+};
+const COACHES={
+  ARG:"Lionel Scaloni",BRA:"Carlo Ancelotti",FRA:"Didier Deschamps",ENG:"Thomas Tuchel",ESP:"Luis de la Fuente",POR:"Roberto Martínez",NED:"Ronald Koeman",GER:"Julian Nagelsmann",CRO:"Zlatko Dalić",BEL:"Rudi Garcia",URU:"Marcelo Bielsa",COL:"Néstor Lorenzo",MEX:"Javier Aguirre",USA:"Mauricio Pochettino",JPN:"Hajime Moriyasu",KOR:"Hong Myung-bo",MAR:"Mohamed Ouahbi",SEN:"Pape Thiaw",CIV:"Emerse Faé",EGY:"Hossam Hassan",NOR:"Ståle Solbakken",SUI:"Murat Yakin",AUS:"Tony Popovic",CAN:"Jesse Marsch",ECU:"Sebastián Beccacece",AUT:"Ralf Rangnick",SWE:"Graham Potter",ALG:"Vladimir Petković",TUN:"Sabri Lamouchi",CZE:"Miroslav Koubek",SCO:"Steve Clarke",PAR:"Gustavo Alfaro",RSA:"Hugo Broos",KSA:"Georgios Donis",IRN:"Amir Ghalenoei",IRQ:"Graham Arnold",JOR:"Jamal Sellami",UZB:"Fabio Cannavaro",COD:"Sébastien Desabre",GHA:"Carlos Queiroz",PAN:"Thomas Christiansen",HAI:"Sébastien Migné",CPV:"Bubista",NZL:"Darren Bazeley",BIH:"Sergej Barbarez",QAT:"Julen Lopetegui",CUW:"Dick Advocaat",TUR:"Vincenzo Montella"
+};
+
+
+let _globeStarted=false,_globeRAF=null,_globeAPI=null;
+function initGlobe(){
+  if(_globeStarted){ if(_globeAPI) _globeAPI.resize(); return; }
+  _globeStarted=true;
+  const loading=document.getElementById("globe-loading");
+  if(typeof THREE!=="undefined"){buildGlobe();return;}
+  const s=document.createElement("script");
+  s.src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
+  s.onload=buildGlobe;
+  s.onerror=()=>{ if(loading) loading.textContent="Couldn't load 3D engine (check connection)."; };
+  document.head.appendChild(s);
+}
+function latLngToVec3(lat,lng,r){
+  const phi=(90-lat)*Math.PI/180, theta=(lng+180)*Math.PI/180;
+  return new THREE.Vector3(-r*Math.sin(phi)*Math.cos(theta), r*Math.cos(phi), r*Math.sin(phi)*Math.sin(theta));
+}
+/* Recognizable continents via simplified coastline POLYGONS (point-in-polygon test).
+   Coordinates are [lng,lat] vertices tracing each landmass outline — far more lifelike
+   than rectangles, while staying fully self-contained (no external map image). */
+const LAND_POLYS=[
+  // North America (Canada + USA + Mexico, Alaska, Florida, Baja)
+  [[-168,65],[-160,71],[-141,70],[-128,70],[-110,68],[-95,72],[-82,73],[-74,68],[-64,60],[-56,52],[-66,45],[-70,42],[-74,40],[-76,35],[-81,31],[-80,25],[-82,25],[-83,29],[-90,29],[-97,26],[-97,22],[-106,23],[-110,23],[-112,30],[-117,32],[-124,40],[-124,48],[-130,54],[-140,60],[-150,59],[-158,57],[-165,60],[-168,65]],
+  // Greenland
+  [[-46,60],[-30,60],[-20,70],[-22,76],[-32,83],[-45,83],[-58,76],[-55,68],[-46,60]],
+  // South America
+  [[-79,9],[-72,11],[-62,10],[-52,5],[-50,0],[-44,-2],[-39,-13],[-48,-25],[-54,-34],[-58,-39],[-63,-41],[-66,-45],[-71,-52],[-75,-52],[-73,-45],[-71,-37],[-71,-30],[-71,-18],[-76,-14],[-81,-6],[-80,1],[-78,6],[-79,9]],
+  // Africa
+  [[-16,15],[-16,21],[-10,28],[-5,32],[10,37],[20,33],[25,32],[32,31],[35,24],[37,18],[43,12],[51,12],[48,5],[41,-2],[40,-10],[35,-18],[32,-26],[26,-34],[18,-35],[12,-18],[9,-2],[8,4],[-8,5],[-13,9],[-16,15]],
+  // Europe (incl. Scandinavia, British Isles attached for simplicity)
+  [[-10,37],[-9,44],[-2,49],[-5,58],[5,62],[12,66],[22,70],[30,70],[40,66],[42,55],[40,47],[30,46],[28,41],[22,40],[15,40],[8,44],[3,43],[-2,43],[-9,40],[-10,37]],
+  // Asia (Eurasia east of the Urals — big landmass to Siberia/China/India)
+  [[40,47],[45,52],[55,55],[70,55],[85,52],[100,52],[110,60],[125,55],[140,58],[160,62],[170,66],[180,66],[180,72],[140,75],[110,74],[80,76],[55,72],[42,68],[40,60],[40,47]],
+  // India + SE peninsula
+  [[68,24],[72,20],[73,15],[77,8],[80,10],[83,17],[88,21],[92,22],[97,16],[99,9],[104,9],[109,11],[109,18],[106,21],[100,22],[95,27],[88,27],[80,30],[74,32],[70,28],[68,24]],
+  // China east coast block already partly in Asia; add SE Asia/Indochina lower
+  [[97,28],[105,23],[110,21],[117,23],[122,30],[121,38],[126,40],[130,43],[123,40],[119,35],[117,30],[110,25],[105,22],[100,20],[97,28]],
+  // Indonesia / Malay archipelago (one simplified blob)
+  [[95,5],[100,2],[104,-1],[110,-4],[118,-4],[125,-3],[132,-2],[141,-3],[141,-8],[130,-8],[120,-9],[112,-8],[105,-6],[100,0],[95,5]],
+  // Australia
+  [[113,-22],[114,-30],[118,-35],[124,-34],[131,-32],[138,-35],[141,-38],[147,-38],[150,-37],[153,-31],[153,-25],[146,-19],[142,-11],[136,-12],[130,-13],[122,-18],[114,-22],[113,-22]],
+  // New Zealand
+  [[166,-46],[171,-44],[174,-41],[178,-38],[177,-39],[173,-42],[168,-46],[166,-46]],
+  // Japan
+  [[130,31],[132,34],[136,35],[140,36],[142,40],[141,43],[144,44],[140,41],[137,37],[133,34],[130,31]],
+  // Madagascar
+  [[43,-12],[50,-15],[50,-25],[45,-25],[43,-18],[43,-12]],
+  // British Isles (separate so they read as islands)
+  [[-6,50],[-3,51],[-1,53],[-2,57],[-5,58],[-8,57],[-8,52],[-6,50]],
+];
+function pointInPoly(lng,lat,poly){
+  let inside=false;
+  for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+    const xi=poly[i][0],yi=poly[i][1],xj=poly[j][0],yj=poly[j][1];
+    if(((yi>lat)!==(yj>lat)) && (lng < (xj-xi)*(lat-yi)/(yj-yi)+xi)) inside=!inside;
+  }
+  return inside;
+}
+function isLand(lat,lng){
+  for(const poly of LAND_POLYS){ if(pointInPoly(lng,lat,poly)) return true; }
+  return false;
+}
+
+
+function buildGlobe(){
+  const canvas=document.getElementById("globe-canvas");
+  const wrap=document.getElementById("globe-wrap");
+  const loading=document.getElementById("globe-loading");
+  let W=wrap.clientWidth,H=wrap.clientHeight;
+  const R=2;
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(45,W/H,0.1,100); camera.position.z=5;
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setSize(W,H); renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+
+  // ocean sphere
+  scene.add(new THREE.Mesh(new THREE.SphereGeometry(R*0.99,64,64),
+    new THREE.MeshBasicMaterial({color:0x0a2540})));
+  // atmosphere halo
+  scene.add(new THREE.Mesh(new THREE.SphereGeometry(R*1.16,48,48),
+    new THREE.MeshBasicMaterial({color:0x2a6cb0,transparent:true,opacity:0.10,side:THREE.BackSide})));
+
+  const pivot=new THREE.Group(); scene.add(pivot);   // fixed Earth axial tilt
+  pivot.rotation.z=23.5*Math.PI/180;                 // ~23.5° like the real Earth
+  const group=new THREE.Group(); pivot.add(group);   // spins on its own Y axis only
+
+  // procedural continents: scatter land dots, denser, with latitude-based shading
+  const landPts=[], landCol=[];
+  const cTrop=new THREE.Color(0x3aa564), cMid=new THREE.Color(0x6f8f4a), cA2=new THREE.Color(0x9a7b4f), cPole=new THREE.Color(0xeef3f6);
+  const tmpC=new THREE.Color();
+  for(let i=0;i<60000;i++){
+    const lat=Math.random()*180-90, lng=Math.random()*360-180;
+    if(isLand(lat,lng)){
+      landPts.push(latLngToVec3(lat,lng,R*1.002));
+      const a=Math.abs(lat);
+      if(a<23){ tmpC.copy(cTrop); }
+      else if(a<55){ tmpC.copy(cMid).lerp(cA2, (a-23)/32*0.6); }
+      else { tmpC.copy(cA2).lerp(cPole, Math.min(1,(a-55)/25)); }
+      landCol.push(tmpC.r,tmpC.g,tmpC.b);
+    }
+  }
+  const lg=new THREE.BufferGeometry().setFromPoints(landPts);
+  lg.setAttribute('color', new THREE.Float32BufferAttribute(landCol,3));
+  group.add(new THREE.Points(lg,new THREE.PointsMaterial({size:0.016,sizeAttenuation:true,vertexColors:true})));
+  // graticule
+  const grat=new THREE.Mesh(new THREE.SphereGeometry(R*1.001,36,36),
+    new THREE.MeshBasicMaterial({color:0x16324f,wireframe:true,transparent:true,opacity:0.18}));
+  group.add(grat);
+
+  // markers: flag-colour halo + small pin, gold ring if titles>0
+  const markers=[]; const codes=Object.keys(GEO);
+  codes.forEach(code=>{
+    const g=GEO[code]; const pos=latLngToVec3(g.lat,g.lng,R*1.01);
+    const t=1-Math.min(g.s,90)/95; const size=0.03+t*0.045;
+    const c1=new THREE.Color(g.col), c2=new THREE.Color(g.col2||g.col);
+    const dot=new THREE.Mesh(new THREE.SphereGeometry(size,14,14),
+      new THREE.MeshBasicMaterial({color:c1})); dot.position.copy(pos); dot.userData={code};
+    group.add(dot); markers.push(dot);
+    const halo=new THREE.Mesh(new THREE.SphereGeometry(size*2.0,12,12),
+      new THREE.MeshBasicMaterial({color:c2,transparent:true,opacity:0.22})); halo.position.copy(pos);
+    halo.userData={code}; group.add(halo); markers.push(halo);
+    if(g.titles>0){ // gold ring for champions
+      const ring=new THREE.Mesh(new THREE.RingGeometry(size*2.4,size*2.9,24),
+        new THREE.MeshBasicMaterial({color:0xf4c542,side:THREE.DoubleSide,transparent:true,opacity:0.9}));
+      ring.position.copy(pos); ring.lookAt(0,0,0); group.add(ring);
+    }
+  });
+
+  let arcs=[];
+  function clearArcs(){arcs.forEach(a=>group.remove(a));arcs=[];}
+  function drawArcs(code){
+    clearArcs(); const from=GEO[code]; if(!from)return;
+    (RIVALS[code]||[]).forEach(r=>{ const to=GEO[r]; if(!to)return;
+      const p1=latLngToVec3(from.lat,from.lng,R*1.01), p2=latLngToVec3(to.lat,to.lng,R*1.01);
+      const mid=p1.clone().add(p2).multiplyScalar(0.5).normalize().multiplyScalar(R*1.5);
+      const curve=new THREE.QuadraticBezierCurve3(p1,mid,p2);
+      const geo=new THREE.BufferGeometry().setFromPoints(curve.getPoints(40));
+      const line=new THREE.Line(geo,new THREE.LineBasicMaterial({color:0xf4c542,transparent:true,opacity:0.65}));
+      group.add(line); arcs.push(line); });
+  }
+
+  // rotation + zoom + fly-to
+  let dragging=false,px=0,py=0,autoRot=true,rotX=0.12,rotY=0,target=null;
+  canvas.addEventListener("pointerdown",e=>{dragging=true;autoRot=false;px=e.clientX;py=e.clientY;});
+  window.addEventListener("pointerup",()=>dragging=false);
+  window.addEventListener("pointermove",e=>{ if(!dragging)return;
+    rotY+=(e.clientX-px)*0.005; rotX+=(e.clientY-py)*0.005;
+    rotX=Math.max(-1.2,Math.min(1.2,rotX)); px=e.clientX; py=e.clientY; });
+  canvas.addEventListener("wheel",e=>{e.preventDefault();
+    camera.position.z=Math.max(3.2,Math.min(9,camera.position.z+e.deltaY*0.002));},{passive:false});
+
+  const ray=new THREE.Raycaster(),mouse=new THREE.Vector2(); let dX=0,dY=0;
+  ray.params.Points={threshold:0.08};                 // generous picking for point clouds
+  canvas.addEventListener("pointerdown",e=>{dX=e.clientX;dY=e.clientY;});
+  canvas.addEventListener("pointerup",e=>{
+    if(Math.abs(e.clientX-dX)>6||Math.abs(e.clientY-dY)>6)return;
+    const rect=canvas.getBoundingClientRect();
+    mouse.x=((e.clientX-rect.left)/rect.width)*2-1; mouse.y=-((e.clientY-rect.top)/rect.height)*2+1;
+    ray.setFromCamera(mouse,camera);
+    const onGlobe=ray.intersectObjects(markers).length>0;   // did we hit anywhere near the markers?
+    // Pick the country whose marker CENTRE projects nearest the click. Using centre distance
+    // (not raycast hit) avoids large markers stealing clicks meant for a smaller neighbour, and
+    // resolves dense clusters (e.g. the Gulf) to the genuinely closest nation. Frontmost breaks ties.
+    let bestCode=null,bestScore=1e9;
+    const v=new THREE.Vector3();
+    for(const m of markers){
+      m.getWorldPosition(v).project(camera);
+      if(v.z>=1) continue;                                  // far hemisphere
+      const d=Math.hypot(v.x-mouse.x, v.y-mouse.y);
+      const score=d + v.z*0.02;                             // slight bias to frontmost on ties
+      if(score<bestScore){ bestScore=score; bestCode=m.userData.code; }
+    }
+    // Accept the pick if the click is on the globe, or close enough to a marker centre.
+    if(bestCode && (onGlobe || bestScore<0.14)) selectCountry(bestCode);
+  });
+
+  function groupOf(code){for(const g of Object.keys(groups)){if(groups[g].includes(code))return g;}return "?";}
+  function seedOf(code){const g=groupOf(code);const i=groups[g]?groups[g].indexOf(code):-1;return i>=0?(i+1):"?";}
+
+  function flyTo(code){ const g=GEO[code]; if(!g)return;
+    const m=markers.find(x=>x.userData.code===code); if(!m){autoRot=false;return;}
+    const base=m.position.clone();           // marker position in `group` space (un-rotated)
+    // We want screen position (0,0). The full chain is: pivot(tilt z) · group(ry then rx) · base.
+    // Closed-form is messy under the fixed axial tilt + perspective, so solve numerically over
+    // BOTH rx and ry. Coarse sweep to find the basin, then refine — lands the click dead-centre.
+    const pivotM=new THREE.Matrix4().makeRotationZ(pivot.rotation.z);
+    const tmp=new THREE.Vector3(), wp=new THREE.Vector3(), mRotY=new THREE.Matrix4(), mRotX=new THREE.Matrix4(), M=new THREE.Matrix4();
+    const camPos=camera.position.clone();
+    function screenDist(rx,ry){
+      mRotY.makeRotationY(ry); mRotX.makeRotationX(rx);
+      M.copy(pivotM).multiply(mRotX).multiply(mRotY);   // pivot · Rx · Ry  (group applies y then x)
+      wp.copy(base).applyMatrix4(M);                    // marker position in world space
+      // Must be on the NEAR hemisphere: the vector from globe centre to the marker must point
+      // toward the camera (positive dot with camera direction). Otherwise the solver could centre
+      // the marker on the BACK of the globe (hidden), spinning to the antipode.
+      if(wp.dot(camPos) <= 0) return 1e9;
+      tmp.copy(wp).project(camera);
+      return tmp.x*tmp.x + tmp.y*tmp.y;                 // squared distance to screen centre
+    }
+    let bestRx=0,bestRy=0,best=1e9;
+    for(let ry=-Math.PI; ry<=Math.PI; ry+=0.04){
+      for(let rx=-1.2; rx<=1.2; rx+=0.04){
+        const d=screenDist(rx,ry);
+        if(d<best){ best=d; bestRx=rx; bestRy=ry; }
+      }
+    }
+    // refine around the basin for sub-pixel accuracy
+    for(let it=0; it<3; it++){
+      const stepR=0.02/(it+1), stepX=0.02/(it+1);
+      for(let ry=bestRy-0.06; ry<=bestRy+0.06; ry+=stepR){
+        for(let rx=Math.max(-1.2,bestRx-0.06); rx<=Math.min(1.2,bestRx+0.06); rx+=stepX){
+          const d=screenDist(rx,ry);
+          if(d<best){ best=d; bestRx=rx; bestRy=ry; }
+        }
+      }
+    }
+    let ty=bestRy;
+    while(ty - rotY >  Math.PI) ty -= 2*Math.PI;   // shortest spin path
+    while(ty - rotY < -Math.PI) ty += 2*Math.PI;
+    target={y:ty, x:bestRx}; autoRot=false; }
+
+  function selectCountry(code){
+    drawArcs(code); flyTo(code);
+    const g=GEO[code], grp=groupOf(code), seed=seedOf(code);
+    const rivals=(RIVALS[code]||[]).filter(r=>GEO[r]).map(r=>NAME[r]||r);
+    const formHTML=g.form.map(f=>`<i class="${f}">${f}</i>`).join("");
+    // Real World Cup history at the three host nations (USA 1994, Mexico 1970 & 1986, Canada n/a as host).
+    const hostHist={
+      BRA:"At USA '94 Brazil won the World Cup (4th title), beating Italy on penalties in the Pasadena final.",
+      ITA:"Runners-up at USA '94, losing the final to Brazil on penalties.",
+      ARG:"At Mexico '86 Argentina won the title; Maradona's tournament included the 'Hand of God' and the goal of the century vs England.",
+      GER:"West Germany reached the Mexico '86 final, losing 3-2 to Argentina; at USA '94 they fell in the quarter-finals.",
+      NED:"Mexico '70 pre-dates their great sides; the Dutch did not feature as a major force at these host editions.",
+      ENG:"At Mexico '86 England reached the quarter-finals, eliminated by Maradona's Argentina.",
+      FRA:"At Mexico '86 France finished third, their best run before the 1998 triumph.",
+      BEL:"Belgium finished fourth at Mexico '86, a then-record run.",
+      USA:"As hosts in 1994 the USA reached the Round of 16 before losing to eventual champions Brazil.",
+      MEX:"Mexico hosted in 1970 and 1986, reaching the quarter-finals on home soil both times — still their best World Cup finishes.",
+      KOR:"",
+    };
+    const hostHTML=hostHist[code]?`<div class="cc-host"><span class="cc-host-h">Host-nation history</span> ${esc(hostHist[code])}</div>`:"";
+    const card=document.getElementById("country-card");
+    card.innerHTML=`<button class="cc-close" onclick="document.getElementById('country-card').classList.add('hidden')">×</button>
+      <div class="cc-flag">${FLAG[code]||"🏳"}</div>
+      <div class="cc-name">${NAME[code]||code}</div>
+      <div class="cc-meta">Group ${grp} · Seed ${seed} · ${g.conf}</div>
+      <div class="cc-rank">FIFA-style strength #${g.s}</div>
+      <div class="cc-stats">
+        <div class="cc-stat"><div class="k">WC Titles</div><div class="v">${g.titles}${g.titles>0?" 🏆":""}</div></div>
+        <div class="cc-stat"><div class="k">Best Finish</div><div class="v" style="font-size:12px">${g.best}</div></div>
+      </div>
+      <div class="cc-row"><span class="k">Coach:</span> <span class="v">${(typeof COACHES!=="undefined"&&COACHES[code])||g.coach}</span></div>
+      <div class="cc-row"><span class="k">Captain:</span> <span class="v">${(SQUADS[code]&&(SQUADS[code].find(p=>p.cap)||{}).n)||g.cap}</span></div>
+      <div class="cc-row"><span class="k">Recent form:</span><div class="cc-form">${formHTML}</div></div>
+      ${hostHTML}
+      <div class="cc-blurb">${BLURB[code]||""}</div>
+      ${rivals.length?`<div class="cc-rivals">Rivalries: <b>${rivals.join(", ")}</b></div>`:""}
+      ${(SQUADS[code]&&SQUADS[code].length)?`
+        <div class="cc-squad">
+          <div class="cc-squad-h">Official 2026 squad <span>${SQUADS[code].length} players · real FIFA call-up</span></div>
+          <div class="cc-squad-list">
+            ${["GK","DF","MF","FW"].map(pos=>{
+              const grp=SQUADS[code].filter(p=>p.p===pos); if(!grp.length) return "";
+              const label={GK:"Goalkeepers",DF:"Defenders",MF:"Midfielders",FW:"Forwards"}[pos];
+              return `<div class="cc-pos-h">${label}</div>`+grp.map(pl=>`<div class="cc-pl">
+                <div class="cc-pl-top"><span class="cc-pl-n">${esc(pl.n)}${pl.cap?' <span class="cc-cap">(C)</span>':''}</span><span class="cc-pl-cg">${pl.caps} caps · ${pl.g} gls</span></div>
+                <div class="cc-pl-c">${esc(pl.c)}</div>
+              </div>`).join("");
+            }).join("")}
+          </div>
+        </div>`:""}`;
+    card.classList.remove("hidden");
+  }
+  _globeAPI={select:selectCountry, resize:()=>{W=wrap.clientWidth;H=wrap.clientHeight;
+    camera.aspect=W/H;camera.updateProjectionMatrix();renderer.setSize(W,H);}};
+
+  // legend
+  const leg=document.getElementById("globe-legend");
+  if(leg){ leg.innerHTML=Object.keys(CONF_COL).map(k=>`<span><i style="background:${CONF_COL[k]}"></i>${k}</span>`).join("")
+    +`<span><i style="background:#f4c542"></i>◍ = WC winner</span>`; }
+
+  if(loading) loading.style.display="none";
+  function animate(){ _globeRAF=requestAnimationFrame(animate);
+    if(autoRot) rotY+=0.0016;
+    if(target){ rotY+=(target.y-rotY)*0.2; rotX+=(target.x-rotX)*0.2;
+      if(Math.abs(target.y-rotY)<0.01&&Math.abs(target.x-rotX)<0.01){
+        rotY=target.y; rotX=target.x; target=null; } }
+    group.rotation.y=rotY; group.rotation.x=rotX; renderer.render(scene,camera); }
+  animate();
+  window.addEventListener("resize",()=>_globeAPI.resize());
+}
+
+/* search box */
+(function setupSearch(){
+  document.addEventListener("input",function(e){
+    if(e.target&&e.target.id==="country-search"){
+      const q=e.target.value.trim().toLowerCase();
+      const box=document.getElementById("search-results");
+      if(!q){box.classList.remove("show");box.innerHTML="";return;}
+      const hits=Object.keys(GEO).filter(c=>(NAME[c]||c).toLowerCase().includes(q)).slice(0,8);
+      box.innerHTML=hits.map(c=>`<div class="sr" data-code="${c}"><span class="flag">${FLAG[c]}</span>${NAME[c]} <small>${GEO[c].conf}</small></div>`).join("")
+        || `<div class="sr" style="color:var(--muted)">No match</div>`;
+      box.classList.toggle("show",hits.length>0);
+    }
+  });
+  document.addEventListener("click",function(e){
+    const sr=e.target.closest&&e.target.closest(".sr[data-code]");
+    if(sr){ const code=sr.dataset.code;
+      document.getElementById("search-results").classList.remove("show");
+      const inp=document.getElementById("country-search"); if(inp) inp.value=NAME[code]||code;
+      if(_globeAPI) _globeAPI.select(code); }
+    else if(!(e.target&&e.target.id==="country-search")){
+      const box=document.getElementById("search-results"); if(box) box.classList.remove("show"); }
+  });
+})();
 
 function renderAll(){syncThirds();renderThirdsPanel();renderGroups();renderBracket();}
 
@@ -847,5 +1412,26 @@ function renderAll(){syncThirds();renderThirdsPanel();renderGroups();renderBrack
   renderAll();
 })();
 </script>
+<!-- ===== Visit counter (GoatCounter) =====
+     SETUP: 1) sign up free at goatcounter.com  2) pick a code, e.g. "wc26"
+     3) in Settings tick "Allow adding visitor counts on your website"
+     4) replace YOURCODE below (both places) with your code. -->
+<script>
+(function(){
+  var CODE="YOURCODE"; // <-- replace with your goatcounter code
+  if(CODE==="YOURCODE"){ // not configured yet: hide the counter gracefully
+    var c=document.getElementById("visit-counter"); if(c) c.style.display="none";
+    return;
+  }
+  // fetch the total visit count for display
+  fetch("https://"+CODE+".goatcounter.com/counter/"+encodeURIComponent("/")+".json")
+    .then(function(r){return r.json();})
+    .then(function(d){var n=document.getElementById("visit-num"); if(n&&d&&d.count) n.textContent=d.count;})
+    .catch(function(){var c=document.getElementById("visit-counter"); if(c) c.style.display="none";});
+})();
+</script>
+<!-- GoatCounter pageview tracking (replace YOURCODE) -->
+<script data-goatcounter="https://YOURCODE.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
