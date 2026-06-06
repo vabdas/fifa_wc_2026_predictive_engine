@@ -1,0 +1,13 @@
+{
+  "name": "wc26-predictive-engine",
+  "version": "1.0.0",
+  "description": "FIFA WC 26 Predictive Engine — interactive World Cup 2026 prediction bracket.",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "serve": "npx --yes serve -l 5173 ."
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0"
+  }
+}
